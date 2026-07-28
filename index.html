@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hostel Desk — Maintenance &amp; Complaints</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --ink:#1B2430;
+    --ink-soft:#3A4452;
+    --concrete:#EEEDE7;
+    --concrete-deep:#E2E0D6;
+    --card:#FCFBF8;
+    --amber:#E2A63B;
+    --amber-deep:#B9822A;
+    --rust:#C1502E;
+    --moss:#4C7A57;
+    --slate:#6B7684;
+    --slateblue:#4A5C78;
+    --line:#D8D5C8;
+    --radius:4px;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  #hcp-root{
+    font-family:'IBM Plex Sans',sans-serif;
+    color:var(--ink);
+    background:var(--concrete);
+    min-height:100vh;
+    padding:0;
+    -webkit-font-smoothing:antialiased;
+  }
+  #hcp-root .mono{font-family:'IBM Plex Mono',monospace;}
+  #hcp-root .display{
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.03em;
+    line-height:0.95;
+  }
+
+  #hcp-root button{font-family:inherit;cursor:pointer;}
+  #hcp-root input, #hcp-root select, #hcp-root textarea{
+    font-family:inherit;
+    font-size:14px;
+    color:var(--ink);
+    background:var(--card);
+    border:1.5px solid var(--line);
+    border-radius:var(--radius);
+    padding:10px 12px;
+    width:100%;
+  }
+  #hcp-root input:focus-visible, #hcp-root select:focus-visible, #hcp-root textarea:focus-visible, #hcp-root button:focus-visible{
+    outline:2.5px solid var(--slateblue);
+    outline-offset:2px;
+  }
+  #hcp-root label{
+    display:block;
+    font-size:11.5px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--slate);
+    margin-bottom:6px;
+  }
+
+  /* ---------- Shell ---------- */
+  .hcp-nav{
+    background:var(--ink);
+    color:var(--concrete);
+    padding:16px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+    position:sticky;
+    top:0;
+    z-index:20;
+  }
+  .hcp-brand{display:flex;align-items:baseline;gap:10px;}
+  .hcp-brand .display{font-size:26px;color:#fff;}
+  .hcp-brand .tag{font-size:11px;color:var(--amber);font-family:'IBM Plex Mono',monospace;letter-spacing:0.08em;}
+  .hcp-switch-role-btn{
+    background:transparent;border:1.5px solid rgba(255,255,255,0.3);color:var(--concrete);
+    border-radius:20px;padding:7px 14px;font-size:12px;font-weight:600;letter-spacing:0.02em;
+  }
+  .hcp-switch-role-btn:hover{border-color:#fff;}
+
+  .hcp-main{max-width:960px;margin:0 auto;padding:28px 20px 64px;}
+  @media (max-width:640px){.hcp-main{padding:20px 14px 48px;}}
+
+  .hcp-hero{margin-bottom:28px;}
+  .hcp-hero h1{font-size:clamp(32px,6vw,46px);margin:0 0 6px;}
+  .hcp-hero p{color:var(--ink-soft);font-size:15px;max-width:56ch;margin:0;}
+
+  /* ---------- Ticket form ---------- */
+  .hcp-form-card{
+    background:var(--card);
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    padding:24px;
+    position:relative;
+    margin-bottom:36px;
+  }
+  .hcp-form-card.login-form::before{content:"WARDEN LOGIN";}
+  .hcp-form-card::before{
+    content:"RAISE A TICKET";
+    position:absolute;
+    top:-11px;left:20px;
+    background:var(--amber);
+    color:var(--ink);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;font-weight:600;letter-spacing:0.1em;
+    padding:3px 10px;
+    border-radius:3px;
+  }
+  .hcp-grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .hcp-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+  @media (max-width:640px){.hcp-grid2,.hcp-grid3{grid-template-columns:1fr;}}
+  .hcp-field{margin-bottom:16px;}
+  .hcp-submit-row{display:flex;align-items:center;justify-content:space-between;margin-top:6px;flex-wrap:wrap;gap:10px;}
+  .hcp-btn-primary{
+    background:var(--ink);color:#fff;border:none;border-radius:var(--radius);
+    padding:12px 22px;font-size:14px;font-weight:600;letter-spacing:0.02em;
+    transition:background .15s;
+  }
+  .hcp-btn-primary:hover{background:var(--ink-soft);}
+  .hcp-btn-primary:disabled{opacity:0.6;cursor:default;}
+  .hcp-form-hint{font-size:12.5px;color:var(--slate);}
+  .hcp-error{color:var(--rust);font-size:12.5px;margin-top:4px;}
+  .hcp-success-flash{
+    background:#EAF2EC;border:1.5px solid var(--moss);color:#2F5A3D;
+    border-radius:var(--radius);padding:12px 14px;font-size:13.5px;margin-bottom:20px;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+  }
+  .hcp-success-flash strong{font-family:'IBM Plex Mono',monospace;}
+  .hcp-success-flash button{background:none;border:none;color:#2F5A3D;font-size:16px;line-height:1;padding:0 2px;}
+
+  /* ---------- Filter / lookup bars ---------- */
+  .hcp-lookup{
+    display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:18px;
+  }
+  .hcp-lookup .hcp-field{margin-bottom:0;flex:1;min-width:180px;}
+  .hcp-section-title{
+    font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.03em;
+    margin:0 0 14px;display:flex;align-items:center;gap:10px;
+  }
+  .hcp-count-pill{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--concrete-deep);
+    color:var(--ink-soft);padding:3px 9px;border-radius:10px;font-weight:600;
+  }
+
+  /* ---------- Ticket card ---------- */
+  .hcp-ticket{
+    background:var(--card);
+    border:1.5px dashed #C8C4B4;
+    border-radius:6px;
+    padding:18px 18px 16px;
+    margin-bottom:14px;
+    position:relative;
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:12px;
+    align-items:start;
+  }
+  .hcp-ticket::before, .hcp-ticket::after{
+    content:"";
+    position:absolute;
+    width:16px;height:16px;
+    background:var(--concrete);
+    border-radius:50%;
+    top:50%;transform:translateY(-50%);
+  }
+  .hcp-ticket::before{left:-9px;}
+  .hcp-ticket::after{right:-9px;}
+  .hcp-ticket-main .top-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px;}
+  .hcp-ticket-id{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--slate);font-weight:600;}
+  .hcp-ticket-cat{
+    font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;
+    background:var(--concrete-deep);color:var(--ink-soft);padding:2px 8px;border-radius:10px;
+  }
+  .hcp-ticket-title{font-size:15.5px;font-weight:600;margin:4px 0 4px;}
+  .hcp-ticket-desc{font-size:13.5px;color:var(--ink-soft);line-height:1.5;margin:0 0 8px;}
+  .hcp-ticket-meta{font-size:12px;color:var(--slate);display:flex;gap:14px;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;}
+  .hcp-ticket-remark{
+    margin-top:10px;font-size:12.5px;background:var(--concrete);border-left:3px solid var(--slateblue);
+    padding:8px 10px;border-radius:3px;color:var(--ink-soft);
+  }
+  .hcp-ticket-remark b{color:var(--ink);}
+
+  .hcp-stamp{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;font-weight:700;letter-spacing:0.06em;
+    padding:6px 10px;
+    border:2px solid currentColor;
+    border-radius:4px;
+    transform:rotate(-5deg);
+    white-space:nowrap;
+    height:fit-content;
+  }
+  .hcp-stamp.pending{color:var(--amber-deep);}
+  .hcp-stamp.progress{color:var(--slateblue);}
+  .hcp-stamp.resolved{color:var(--moss);}
+  .hcp-stamp.rejected{color:var(--rust);}
+
+  .hcp-priority-dot{display:inline-flex;align-items:center;gap:5px;}
+  .hcp-priority-dot span.dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
+  .dot-low{background:var(--slate);}
+  .dot-medium{background:var(--amber);}
+  .dot-high{background:var(--rust);}
+  .dot-urgent{background:var(--rust);box-shadow:0 0 0 3px rgba(193,80,46,0.18);}
+
+  .hcp-empty{
+    text-align:center;padding:40px 20px;color:var(--slate);font-size:14px;
+    border:1.5px dashed var(--line);border-radius:8px;background:var(--card);
+  }
+
+  /* ---------- Warden view ---------- */
+  .hcp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:26px;}
+  @media (max-width:640px){.hcp-stats{grid-template-columns:repeat(2,1fr);}}
+  .hcp-stat{
+    background:var(--card);border:1.5px solid var(--line);border-radius:6px;
+    padding:14px 14px 12px;position:relative;overflow:hidden;
+  }
+  .hcp-stat .num{font-family:'Bebas Neue',sans-serif;font-size:34px;line-height:1;}
+  .hcp-stat .lbl{font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:var(--slate);font-weight:600;margin-top:4px;}
+  .hcp-stat.acc-amber .num{color:var(--amber-deep);}
+  .hcp-stat.acc-slate .num{color:var(--slateblue);}
+  .hcp-stat.acc-moss .num{color:var(--moss);}
+  .hcp-stat.acc-rust .num{color:var(--rust);}
+
+  .hcp-filterbar{
+    display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;
+    background:var(--card);border:1.5px solid var(--line);border-radius:6px;padding:14px;
+  }
+  .hcp-filterbar .hcp-field{margin-bottom:0;min-width:140px;flex:1;}
+  .hcp-clear-btn{
+    background:transparent;border:1.5px solid var(--line);border-radius:var(--radius);
+    padding:9px 14px;font-size:12.5px;color:var(--ink-soft);font-weight:600;align-self:flex-end;
+  }
+  .hcp-clear-btn:hover{border-color:var(--slate);}
+
+  .hcp-manage-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center;}
+  .hcp-manage-row select{width:auto;flex:0 0 auto;}
+  .hcp-manage-row input{flex:1;min-width:160px;}
+  .hcp-manage-row button{
+    background:var(--ink);color:#fff;border:none;border-radius:var(--radius);
+    padding:9px 16px;font-size:12.5px;font-weight:600;
+  }
+  .hcp-manage-row button:hover{background:var(--ink-soft);}
+  .hcp-manage-toggle{
+    background:none;border:none;color:var(--slateblue);font-size:12px;font-weight:600;
+    text-decoration:underline;padding:0;margin-top:8px;
+  }
+
+  .hcp-loading{padding:60px 0;text-align:center;color:var(--slate);font-size:14px;}
+
+  @media (prefers-reduced-motion: no-preference){
+    .hcp-ticket{animation:hcp-pop .25s ease-out;}
+    @keyframes hcp-pop{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  }
+
+  /* ---------- Login / role select screen ---------- */
+  .hcp-login-wrap{
+    min-height:calc(100vh - 68px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:40px 20px;
+  }
+  .hcp-login-card{
+    max-width:520px;
+    width:100%;
+    text-align:center;
+  }
+  .hcp-login-card h1{font-size:clamp(30px,6vw,42px);margin:0 0 10px;}
+  .hcp-login-card p{color:var(--ink-soft);font-size:15px;margin:0 0 30px;}
+  .hcp-login-options{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+  @media (max-width:520px){.hcp-login-options{grid-template-columns:1fr;}}
+  .hcp-login-option{
+    background:var(--card);
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    padding:28px 20px;
+    text-align:center;
+    transition:border-color .15s, transform .15s;
+  }
+  .hcp-login-option:hover{border-color:var(--ink);transform:translateY(-2px);}
+  .hcp-login-option .icon{font-size:30px;margin-bottom:10px;display:block;}
+  .hcp-login-option .role-name{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:0.03em;margin-bottom:4px;}
+  .hcp-login-option .role-desc{font-size:12.5px;color:var(--slate);}
+
+  .hcp-back-link{
+    background:none;border:none;color:var(--slateblue);font-size:12.5px;font-weight:600;
+    text-decoration:underline;padding:0;margin-bottom:18px;
+  }
+</style>
+</head>
+<body>
+
+<div id="hcp-root">
+  <div id="hcp-nav-slot"></div>
+  <div class="hcp-main" id="hcp-main"></div>
+</div>
+
+<script>
+(function(){
+  // ------------------------------------------------------------
+  // Point this at wherever backend/api/ is served from.
+  // Same-origin deployments (frontend + backend on one host) can
+  // leave this as a relative path.
+  // ------------------------------------------------------------
+  const API_BASE = '../backend/api';
+
+  const CATEGORIES = ['Electrical','Plumbing','Furniture','Wi-Fi / Internet','Water Supply','Cleanliness / Pest','Security / Safety','Mess / Food','Other'];
+  const PRIORITIES = ['Low','Medium','High','Urgent'];
+  const STATUSES = ['Pending','In Progress','Resolved','Rejected'];
+
+  let state = {
+    role: null,            // null | 'student' | 'warden'
+    loginStep: 'choose',   // 'choose' | 'warden-creds'
+    warden: null,          // { id, username, full_name } once logged in
+    loginError: '',
+    loginBusy: false,
+
+    tickets: [],
+    counts: { pending:0, inProgress:0, resolved:0, urgentOpen:0 },
+    loading: false,
+
+    lastTicket: null,
+    formError: '',
+    submitBusy: false,
+
+    studentLookup: '',
+    filters: { status:'All', category:'All', priority:'All', search:'' },
+    openManage: {},
+  };
+
+  let lookupDebounce = null;
+  let searchDebounce = null;
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function fmtDate(iso){
+    const d = new Date(iso.replace(' ', 'T'));
+    return d.toLocaleDateString(undefined,{day:'2-digit',month:'short',year:'numeric'}) + ' · ' +
+           d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});
+  }
+
+  async function api(path, options){
+    options = options || {};
+    options.credentials = 'include';
+    if(options.body){
+      options.headers = Object.assign({'Content-Type':'application/json'}, options.headers||{});
+    }
+    try{
+      const res = await fetch(`${API_BASE}/${path}`, options);
+      let data;
+      try{ data = await res.json(); }catch(e){ data = { ok:false, error:'Unexpected server response.' }; }
+      return { status: res.status, data };
+    }catch(networkErr){
+      return { status: 0, data: { ok:false, error:"Can't reach the server. Check that the backend is running and API_BASE is correct." } };
+    }
+  }
+
+  // ---------- Auth / role ----------
+
+  async function checkExistingSession(){
+    try{
+      const { data } = await api('session_check.php');
+      if(data.ok && data.logged_in){
+        state.warden = data.warden;
+        state.role = 'warden';
+        await loadWardenTickets();
+      }
+    }catch(e){
+      // ignore — just show the login screen
+    }finally{
+      render();
+    }
+  }
+
+  function goToLogin(){
+    state.loginStep = 'choose';
+    state.loginError = '';
+    render();
+  }
+
+  async function chooseStudent(){
+    state.role = 'student';
+    state.tickets = [];
+    state.studentLookup = '';
+    render();
+  }
+
+  function chooseWardenLogin(){
+    state.loginStep = 'warden-creds';
+    state.loginError = '';
+    render();
+  }
+
+  async function submitWardenLogin(username, password){
+    state.loginBusy = true;
+    state.loginError = '';
+    render();
+
+    const { data } = await api('warden_login.php', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+    });
+
+    state.loginBusy = false;
+
+    if(!data.ok){
+      state.loginError = data.error || 'Login failed.';
+      render();
+      return;
+    }
+
+    state.warden = data.warden;
+    state.role = 'warden';
+    await loadWardenTickets();
+    render();
+  }
+
+  async function logoutWarden(){
+    await api('warden_logout.php', { method:'POST' });
+    state.warden = null;
+    state.role = null;
+    state.loginStep = 'choose';
+    render();
+  }
+
+  function switchPortal(){
+    if(state.role === 'warden'){
+      logoutWarden();
+    } else {
+      state.role = null;
+      state.loginStep = 'choose';
+      render();
+    }
+  }
+
+  // ---------- Student actions ----------
+
+  async function submitComplaint(formEl){
+    const data = Object.fromEntries(new FormData(formEl).entries());
+    state.submitBusy = true;
+    render();
+
+    const res = await api('submit_complaint.php', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+
+    state.submitBusy = false;
+
+    if(!res.data.ok){
+      state.formError = res.data.error || "Couldn't save your ticket. Please try again.";
+      render();
+      return;
+    }
+
+    state.formError = '';
+    state.lastTicket = res.data.ticket;
+    state.studentLookup = res.data.ticket.student_name;
+    formEl.reset();
+    await runStudentLookup();
+    render();
+  }
+
+  async function runStudentLookup(){
+    const q = state.studentLookup.trim();
+    if(!q){ state.tickets = []; return; }
+    const { data } = await api(`list_complaints.php?mode=student&lookup=${encodeURIComponent(q)}`);
+    state.tickets = data.ok ? data.tickets : [];
+  }
+
+  // ---------- Warden actions ----------
+
+  async function loadWardenTickets(){
+    state.loading = true;
+    render();
+    const f = state.filters;
+    const params = new URLSearchParams({ mode:'warden', status:f.status, category:f.category, priority:f.priority, search:f.search });
+    const { data } = await api(`list_complaints.php?${params.toString()}`);
+    state.loading = false;
+    if(data.ok){
+      state.tickets = data.tickets;
+      state.counts = data.counts;
+    }
+  }
+
+  async function updateStatus(id, status, remark){
+    const { data } = await api('update_status.php', {
+      method: 'POST',
+      body: JSON.stringify({ id, status, remark }),
+    });
+    if(data.ok){
+      await loadWardenTickets();
+      render();
+    }
+  }
+
+  // ---------- Rendering ----------
+
+  function renderNav(){
+    const el = document.getElementById('hcp-nav-slot');
+    const roleLabel = state.role==='student' ? 'Student Portal' : state.role==='warden' ? 'Warden Portal' : '';
+    el.innerHTML = `
+      <div class="hcp-nav">
+        <div class="hcp-brand">
+          <span class="display">HOSTEL DESK</span>
+          <span class="tag mono">${state.role ? roleLabel.toUpperCase() : 'MAINTENANCE &amp; COMPLAINTS'}</span>
+        </div>
+        ${state.role ? `<button class="hcp-switch-role-btn" id="hcp-switch-role">${state.role==='warden' ? 'Log out' : 'Switch portal'}</button>` : ''}
+      </div>`;
+    const switchBtn = document.getElementById('hcp-switch-role');
+    if(switchBtn) switchBtn.addEventListener('click', switchPortal);
+  }
+
+  function renderLoginScreen(){
+    const container = document.getElementById('hcp-main');
+
+    if(state.loginStep === 'warden-creds'){
+      container.innerHTML = `
+        <div class="hcp-login-wrap">
+          <div style="max-width:420px;width:100%;">
+            <button class="hcp-back-link" id="hcp-back-to-choose">&larr; Back</button>
+            <form class="hcp-form-card login-form" id="hcp-warden-login-form">
+              <div class="hcp-field">
+                <label for="hcp-w-username">Username</label>
+                <input id="hcp-w-username" name="username" type="text" autocomplete="username" required />
+              </div>
+              <div class="hcp-field">
+                <label for="hcp-w-password">Password</label>
+                <input id="hcp-w-password" name="password" type="password" autocomplete="current-password" required />
+              </div>
+              ${state.loginError ? `<div class="hcp-error">${escapeHtml(state.loginError)}</div>` : ''}
+              <div class="hcp-submit-row">
+                <span class="hcp-form-hint">Staff access only.</span>
+                <button type="submit" class="hcp-btn-primary" ${state.loginBusy?'disabled':''}>${state.loginBusy?'Logging in…':'Log in'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+      document.getElementById('hcp-back-to-choose').addEventListener('click', goToLogin);
+      document.getElementById('hcp-warden-login-form').addEventListener('submit', e=>{
+        e.preventDefault();
+        const f = e.target;
+        submitWardenLogin(f.username.value.trim(), f.password.value);
+      });
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="hcp-login-wrap">
+        <div class="hcp-login-card">
+          <h1 class="display">WELCOME TO HOSTEL DESK</h1>
+          <p>Choose how you'd like to log in to continue.</p>
+          <div class="hcp-login-options">
+            <button class="hcp-login-option" id="hcp-choose-student">
+              <span class="icon">🎓</span>
+              <div class="role-name">STUDENT</div>
+              <div class="role-desc">Raise a ticket &amp; track your complaints</div>
+            </button>
+            <button class="hcp-login-option" id="hcp-choose-warden">
+              <span class="icon">🗝️</span>
+              <div class="role-name">WARDEN</div>
+              <div class="role-desc">Review, filter &amp; resolve tickets</div>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.getElementById('hcp-choose-student').addEventListener('click', chooseStudent);
+    document.getElementById('hcp-choose-warden').addEventListener('click', chooseWardenLogin);
+  }
+
+  function optionList(arr, includeAll){
+    const opts = includeAll ? ['All', ...arr] : arr;
+    return opts.map(o=>`<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join('');
+  }
+
+  function priorityDot(p){
+    const cls = {'Low':'dot-low','Medium':'dot-medium','High':'dot-high','Urgent':'dot-urgent'}[p]||'dot-low';
+    return `<span class="hcp-priority-dot"><span class="dot ${cls}"></span>${escapeHtml(p)}</span>`;
+  }
+
+  function stampFor(status){
+    const cls = {'Pending':'pending','In Progress':'progress','Resolved':'resolved','Rejected':'rejected'}[status]||'pending';
+    return `<div class="hcp-stamp ${cls}">${escapeHtml(status.toUpperCase())}</div>`;
+  }
+
+  function renderTicketCard(c, opts){
+    opts = opts || {};
+    const manageOpen = !!state.openManage[c.id];
+    const remarkHtml = c.remark ? `<div class="hcp-ticket-remark"><b>Warden's note:</b> ${escapeHtml(c.remark)}</div>` : '';
+    let manageHtml = '';
+    if(opts.manageable){
+      manageHtml = `
+        <button class="hcp-manage-toggle" data-toggle="${c.id}">${manageOpen ? 'Close' : 'Update status'}</button>
+        ${manageOpen ? `
+        <div class="hcp-manage-row">
+          <select data-status-select="${c.id}">
+            ${STATUSES.map(s=>`<option value="${s}" ${s===c.status?'selected':''}>${s}</option>`).join('')}
+          </select>
+          <input type="text" placeholder="Add a note for the student (optional)" data-remark-input="${c.id}" value="${escapeHtml(c.remark||'')}"/>
+          <button data-save="${c.id}">Save</button>
+        </div>` : ''}
+      `;
+    }
+    return `
+      <div class="hcp-ticket">
+        <div class="hcp-ticket-main">
+          <div class="top-row">
+            <span class="hcp-ticket-id">${escapeHtml(c.ticket_no)}</span>
+            <span class="hcp-ticket-cat">${escapeHtml(c.category)}</span>
+            ${priorityDot(c.priority)}
+          </div>
+          <div class="hcp-ticket-title">Room ${escapeHtml(c.room_number)} · ${escapeHtml(c.block)}</div>
+          <p class="hcp-ticket-desc">${escapeHtml(c.description)}</p>
+          <div class="hcp-ticket-meta">
+            <span>${escapeHtml(c.student_name)}</span>
+            <span>Filed ${fmtDate(c.created_at)}</span>
+            ${c.updated_at!==c.created_at ? `<span>Updated ${fmtDate(c.updated_at)}</span>` : ''}
+          </div>
+          ${remarkHtml}
+          ${manageHtml}
+        </div>
+        ${stampFor(c.status)}
+      </div>`;
+  }
+
+  function renderStudentView(){
+    const container = document.getElementById('hcp-main');
+    const flash = state.lastTicket ? `
+      <div class="hcp-success-flash">
+        <span>Ticket <strong>${escapeHtml(state.lastTicket.ticket_no)}</strong> filed. The warden's team will pick it up.</span>
+        <button aria-label="Dismiss" data-dismiss-flash>×</button>
+      </div>` : '';
+
+    const lookupName = state.studentLookup.trim();
+
+    container.innerHTML = `
+      <div class="hcp-hero">
+        <h1 class="display">SOMETHING NOT WORKING<br/>IN YOUR ROOM?</h1>
+        <p>File a ticket below and the warden's office will follow up. Keep your name or room number handy to track it.</p>
+      </div>
+
+      ${flash}
+
+      <form class="hcp-form-card" id="hcp-complaint-form">
+        <div class="hcp-grid3">
+          <div class="hcp-field">
+            <label for="hcp-name">Your name</label>
+            <input id="hcp-name" name="studentName" type="text" placeholder="e.g. Aditi Sharma" required />
+          </div>
+          <div class="hcp-field">
+            <label for="hcp-room">Room number</label>
+            <input id="hcp-room" name="roomNumber" type="text" placeholder="e.g. B-204" required />
+          </div>
+          <div class="hcp-field">
+            <label for="hcp-block">Hostel block</label>
+            <input id="hcp-block" name="block" type="text" placeholder="e.g. Block B" />
+          </div>
+        </div>
+        <div class="hcp-grid2">
+          <div class="hcp-field">
+            <label for="hcp-cat">Category</label>
+            <select id="hcp-cat" name="category">${optionList(CATEGORIES,false)}</select>
+          </div>
+          <div class="hcp-field">
+            <label for="hcp-pri">Priority</label>
+            <select id="hcp-pri" name="priority">${optionList(PRIORITIES,false)}</select>
+          </div>
+        </div>
+        <div class="hcp-field">
+          <label for="hcp-desc">What's going on?</label>
+          <textarea id="hcp-desc" name="description" rows="4" placeholder="Describe the issue: what's broken, since when, and anything the warden should know."></textarea>
+        </div>
+        ${state.formError ? `<div class="hcp-error">${escapeHtml(state.formError)}</div>` : ''}
+        <div class="hcp-submit-row">
+          <span class="hcp-form-hint">Your ticket is visible to hostel staff and other students checking status.</span>
+          <button type="submit" class="hcp-btn-primary" ${state.submitBusy?'disabled':''}>${state.submitBusy?'Submitting…':'Raise ticket'}</button>
+        </div>
+      </form>
+
+      <h2 class="hcp-section-title">TRACK YOUR TICKETS</h2>
+      <div class="hcp-lookup">
+        <div class="hcp-field">
+          <label for="hcp-lookup">Search by your name or room number</label>
+          <input id="hcp-lookup" type="text" placeholder="e.g. Aditi or B-204" value="${escapeHtml(state.studentLookup)}" />
+        </div>
+      </div>
+      <div id="hcp-my-tickets">
+        ${!lookupName ? `<div class="hcp-empty">Enter your name or room number above to see your tickets.</div>` :
+          state.tickets.length===0 ? `<div class="hcp-empty">No tickets found for "${escapeHtml(state.studentLookup)}" yet.</div>` :
+          state.tickets.map(c=>renderTicketCard(c,{manageable:false})).join('')}
+      </div>
+    `;
+
+    document.getElementById('hcp-complaint-form').addEventListener('submit', e=>{
+      e.preventDefault();
+      submitComplaint(e.target);
+    });
+    const dismissBtn = container.querySelector('[data-dismiss-flash]');
+    if(dismissBtn) dismissBtn.addEventListener('click', ()=>{ state.lastTicket=null; render(); });
+
+    const lookupInput = document.getElementById('hcp-lookup');
+    lookupInput.addEventListener('input', e=>{
+      state.studentLookup = e.target.value;
+      clearTimeout(lookupDebounce);
+      lookupDebounce = setTimeout(async ()=>{
+        await runStudentLookup();
+        renderStudentTicketsOnly();
+      }, 300);
+    });
+  }
+
+  function renderStudentTicketsOnly(){
+    const lookupName = state.studentLookup.trim();
+    document.getElementById('hcp-my-tickets').innerHTML =
+      !lookupName ? `<div class="hcp-empty">Enter your name or room number above to see your tickets.</div>` :
+      state.tickets.length===0 ? `<div class="hcp-empty">No tickets found for "${escapeHtml(state.studentLookup)}" yet.</div>` :
+      state.tickets.map(c=>renderTicketCard(c,{manageable:false})).join('');
+  }
+
+  function renderWardenView(){
+    const container = document.getElementById('hcp-main');
+    const counts = state.counts;
+    const f = state.filters;
+
+    container.innerHTML = `
+      <div class="hcp-hero">
+        <h1 class="display">WARDEN DESK</h1>
+        <p>Welcome, ${escapeHtml(state.warden ? state.warden.full_name : '')}. Update status as work happens so students know where things stand.</p>
+      </div>
+
+      <div class="hcp-stats">
+        <div class="hcp-stat acc-amber"><div class="num">${counts.pending}</div><div class="lbl">Pending</div></div>
+        <div class="hcp-stat acc-slate"><div class="num">${counts.inProgress}</div><div class="lbl">In Progress</div></div>
+        <div class="hcp-stat acc-moss"><div class="num">${counts.resolved}</div><div class="lbl">Resolved</div></div>
+        <div class="hcp-stat acc-rust"><div class="num">${counts.urgentOpen}</div><div class="lbl">Open &amp; Urgent</div></div>
+      </div>
+
+      <div class="hcp-filterbar">
+        <div class="hcp-field">
+          <label for="hcp-f-search">Search</label>
+          <input id="hcp-f-search" type="text" placeholder="Name, room, or ticket no." value="${escapeHtml(f.search)}"/>
+        </div>
+        <div class="hcp-field">
+          <label for="hcp-f-status">Status</label>
+          <select id="hcp-f-status">${optionList(STATUSES,true)}</select>
+        </div>
+        <div class="hcp-field">
+          <label for="hcp-f-category">Category</label>
+          <select id="hcp-f-category">${optionList(CATEGORIES,true)}</select>
+        </div>
+        <div class="hcp-field">
+          <label for="hcp-f-priority">Priority</label>
+          <select id="hcp-f-priority">${optionList(PRIORITIES,true)}</select>
+        </div>
+        <button class="hcp-clear-btn" id="hcp-clear-filters">Clear filters</button>
+      </div>
+
+      <h2 class="hcp-section-title">TICKETS <span class="hcp-count-pill">${state.tickets.length}</span></h2>
+      <div id="hcp-warden-list">
+        ${state.loading ? `<div class="hcp-loading">Loading tickets…</div>` :
+          state.tickets.length===0 ? `<div class="hcp-empty">No tickets match those filters. Try clearing them.</div>` :
+          state.tickets.map(c=>renderTicketCard(c,{manageable:true})).join('')}
+      </div>
+    `;
+
+    document.getElementById('hcp-f-status').value = f.status;
+    document.getElementById('hcp-f-category').value = f.category;
+    document.getElementById('hcp-f-priority').value = f.priority;
+
+    document.getElementById('hcp-f-search').addEventListener('input', e=>{
+      f.search = e.target.value;
+      clearTimeout(searchDebounce);
+      searchDebounce = setTimeout(async ()=>{ await loadWardenTickets(); render(); }, 300);
+    });
+    document.getElementById('hcp-f-status').addEventListener('change', async e=>{ f.status = e.target.value; await loadWardenTickets(); render(); });
+    document.getElementById('hcp-f-category').addEventListener('change', async e=>{ f.category = e.target.value; await loadWardenTickets(); render(); });
+    document.getElementById('hcp-f-priority').addEventListener('change', async e=>{ f.priority = e.target.value; await loadWardenTickets(); render(); });
+    document.getElementById('hcp-clear-filters').addEventListener('click', async ()=>{
+      state.filters = { status:'All', category:'All', priority:'All', search:'' };
+      await loadWardenTickets();
+      render();
+    });
+
+    attachWardenListHandlers();
+  }
+
+  function attachWardenListHandlers(){
+    document.querySelectorAll('[data-toggle]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const id = btn.dataset.toggle;
+        state.openManage[id] = !state.openManage[id];
+        render();
+      });
+    });
+    document.querySelectorAll('[data-save]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const id = btn.dataset.save;
+        const statusSel = document.querySelector(`[data-status-select="${id}"]`);
+        const remarkInput = document.querySelector(`[data-remark-input="${id}"]`);
+        updateStatus(id, statusSel.value, remarkInput.value.trim());
+      });
+    });
+  }
+
+  function render(){
+    renderNav();
+    if(!state.role){
+      renderLoginScreen();
+      return;
+    }
+    if(state.role==='student') renderStudentView();
+    else renderWardenView();
+  }
+
+  checkExistingSession();
+})();
+</script>
+
+</body>
+</html>
