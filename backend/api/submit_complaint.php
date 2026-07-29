@@ -2,7 +2,20 @@
 require_once __DIR__ . '/../helpers.php';
 require_method('POST');
 
-$in = json_input();
+// We are now accepting multipart/form-data
+$in = $_POST;
+
+$botCheck = clean_str($in['bot_check'] ?? '');
+if ($botCheck !== '') {
+    // Honeypot triggered. Silently ignore bot to baffle them.
+    json_response(['ok' => true], 200);
+}
+
+$pdo = db();
+$ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+
+// Rate limiting
+check_rate_limit($pdo, $ip);
 
 $name  = clean_str($in['studentName'] ?? '');
 $room  = clean_str($in['roomNumber'] ?? '');
@@ -11,8 +24,8 @@ $desc  = clean_str($in['description'] ?? '');
 $category = clean_str($in['category'] ?? '');
 $priority = clean_str($in['priority'] ?? 'Medium');
 
-$validCategories = ['Electrical','Plumbing','Furniture','Wi-Fi / Internet','Water Supply','Cleanliness / Pest','Security / Safety','Mess / Food','Other'];
-$validPriorities = ['Low','Medium','High','Urgent'];
+$validCategories = ['Electrical','Plumbing','Carpentry','Wi-Fi / Internet','Water Supply','Cleanliness / Pest','Cleanliness','Security / Safety','Mess / Food','Furniture','Other'];
+$validPriorities = ['Low','Medium','High','Emergency','Urgent'];
 
 $errors = [];
 if ($name === '')                       $errors[] = 'Name is required.';
@@ -25,22 +38,41 @@ if ($errors) {
     json_response(['ok' => false, 'error' => implode(' ', $errors)], 422);
 }
 
-$pdo = db();
+// Handle optional file upload
+$imagePath = null;
+if (isset($_FILES['photo']) && $_FILES['photo']['error'] !== UPLOAD_ERR_NO_FILE) {
+    $imagePath = handle_file_upload($_FILES['photo']);
+}
 
 try {
     $ticketNo = next_ticket_no($pdo);
 
-    $stmt = $pdo->prepare(
-        'INSERT INTO complaints (ticket_no, student_name, room_number, block, category, priority, description, status)
-         VALUES (?, ?, ?, ?, ?, ?, ?, "Pending")'
-    );
-    $stmt->execute([$ticketNo, $name, $room, $block, $category, $priority, $desc]);
+    $pdo->beginTransaction();
 
-    $id = (int) $pdo->lastInsertId();
+    $stmt = $pdo->prepare(
+        'INSERT INTO complaints (ticket_no, student_name, room_number, block, category, priority, description, status, image_path, ip_address)
+         VALUES (?, ?, ?, ?, ?, ?, ?, "Pending", ?, ?)'
+    );
+    $stmt->execute([$ticketNo, $name, $room, $block, $category, $priority, $desc, $imagePath, $ip]);
+
+    $complaintId = (int) $pdo->lastInsertId();
+
+    // Insert initial audit log
+    $logStmt = $pdo->prepare(
+        'INSERT INTO complaint_logs (complaint_id, old_status, new_status, comment) VALUES (?, ?, ?, ?)'
+    );
+    $logStmt->execute([$complaintId, 'Pending', 'Pending', 'Ticket created by student.']);
+
+    $pdo->commit();
+
+    // Fetch the created ticket to return
     $ticket = $pdo->prepare('SELECT * FROM complaints WHERE id = ?');
-    $ticket->execute([$id]);
+    $ticket->execute([$complaintId]);
 
     json_response(['ok' => true, 'ticket' => $ticket->fetch()], 201);
 } catch (Throwable $e) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     json_response(['ok' => false, 'error' => "Couldn't save your ticket. Please try again."], 500);
 }

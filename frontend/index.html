@@ -5,39 +5,45 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Hostel Desk — Maintenance &amp; Complaints</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
   :root{
-    --ink:#1B2430;
-    --ink-soft:#3A4452;
-    --concrete:#EEEDE7;
-    --concrete-deep:#E2E0D6;
-    --card:#FCFBF8;
-    --amber:#E2A63B;
-    --amber-deep:#B9822A;
-    --rust:#C1502E;
-    --moss:#4C7A57;
-    --slate:#6B7684;
-    --slateblue:#4A5C78;
-    --line:#D8D5C8;
-    --radius:4px;
+    --ink:#0f172a;
+    --ink-soft:#334155;
+    --concrete:#f8fafc;
+    --concrete-deep:#e2e8f0;
+    --card:#ffffff;
+    --primary:#2563eb;
+    --primary-hover:#1d4ed8;
+    --amber:#f59e0b;
+    --amber-deep:#d97706;
+    --rust:#ef4444;
+    --moss:#10b981;
+    --slate:#64748b;
+    --line:#e2e8f0;
+    --radius:12px;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;height:100%;}
   #hcp-root{
-    font-family:'IBM Plex Sans',sans-serif;
+    font-family:'Inter',sans-serif;
     color:var(--ink);
     background:var(--concrete);
     min-height:100vh;
     padding:0;
     -webkit-font-smoothing:antialiased;
+    display: flex;
+    flex-direction: column;
   }
-  #hcp-root .mono{font-family:'IBM Plex Mono',monospace;}
+  #hcp-root .mono{font-family:'JetBrains Mono',monospace;}
   #hcp-root .display{
     font-family:'Bebas Neue',sans-serif;
-    letter-spacing:0.03em;
-    line-height:0.95;
+    letter-spacing:0.04em;
+    line-height:1;
   }
 
   #hcp-root button{font-family:inherit;cursor:pointer;}
@@ -45,281 +51,464 @@
     font-family:inherit;
     font-size:14px;
     color:var(--ink);
-    background:var(--card);
+    background:var(--concrete);
     border:1.5px solid var(--line);
-    border-radius:var(--radius);
-    padding:10px 12px;
+    border-radius:8px;
+    padding:12px 14px;
     width:100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
   #hcp-root input:focus-visible, #hcp-root select:focus-visible, #hcp-root textarea:focus-visible, #hcp-root button:focus-visible{
-    outline:2.5px solid var(--slateblue);
-    outline-offset:2px;
+    outline:none;
+    border-color:var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
   }
   #hcp-root label{
     display:block;
-    font-size:11.5px;
+    font-size:12px;
     font-weight:600;
     text-transform:uppercase;
-    letter-spacing:0.06em;
+    letter-spacing:0.05em;
     color:var(--slate);
-    margin-bottom:6px;
+    margin-bottom:8px;
   }
 
   /* ---------- Shell ---------- */
   .hcp-nav{
-    background:var(--ink);
+    background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     color:var(--concrete);
-    padding:16px 20px;
+    position:sticky;
+    top:0;
+    z-index:20;
+    box-shadow: var(--shadow);
+  }
+  .hcp-nav-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 16px 24px;
     display:flex;
     align-items:center;
     justify-content:space-between;
     flex-wrap:wrap;
     gap:12px;
-    position:sticky;
-    top:0;
-    z-index:20;
   }
-  .hcp-brand{display:flex;align-items:baseline;gap:10px;}
-  .hcp-brand .display{font-size:26px;color:#fff;}
-  .hcp-brand .tag{font-size:11px;color:var(--amber);font-family:'IBM Plex Mono',monospace;letter-spacing:0.08em;}
+  .hcp-brand{display:flex;align-items:baseline;gap:12px;}
+  .hcp-brand .display{font-size:28px;color:#fff;text-shadow: 0 2px 4px rgba(0,0,0,0.2);}
+  .hcp-brand .tag{
+    font-size:11px;
+    color:#e2e8f0;
+    background:rgba(255,255,255,0.1);
+    padding:4px 8px;
+    border-radius:20px;
+    letter-spacing:0.06em;
+  }
   .hcp-switch-role-btn{
-    background:transparent;border:1.5px solid rgba(255,255,255,0.3);color:var(--concrete);
-    border-radius:20px;padding:7px 14px;font-size:12px;font-weight:600;letter-spacing:0.02em;
+    background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.2);
+    color:var(--concrete);
+    border-radius:20px;
+    padding:8px 16px;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.02em;
+    transition: all 0.2s;
   }
-  .hcp-switch-role-btn:hover{border-color:#fff;}
+  .hcp-switch-role-btn:hover{background:rgba(255,255,255,0.2); border-color:rgba(255,255,255,0.4);}
 
-  .hcp-main{max-width:960px;margin:0 auto;padding:28px 20px 64px;}
-  @media (max-width:640px){.hcp-main{padding:20px 14px 48px;}}
+  .hcp-main-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .hcp-main{max-width:1000px; width: 100%; margin:0 auto; padding:40px 24px 64px; flex: 1;}
+  @media (max-width:640px){.hcp-main{padding:24px 16px 48px;}}
 
-  .hcp-hero{margin-bottom:28px;}
-  .hcp-hero h1{font-size:clamp(32px,6vw,46px);margin:0 0 6px;}
-  .hcp-hero p{color:var(--ink-soft);font-size:15px;max-width:56ch;margin:0;}
+  .hcp-hero{margin-bottom:32px;}
+  .hcp-hero h1{
+    font-size:clamp(36px,6vw,52px);
+    margin:0 0 12px;
+    background: linear-gradient(to right, #0f172a, #334155);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hcp-hero p{color:var(--slate);font-size:16px;max-width:60ch;margin:0;line-height:1.6;}
+
+  /* ---------- About Section ---------- */
+  .hcp-about{
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 36px;
+    box-shadow: var(--shadow-sm);
+  }
+  .hcp-about h3 { margin-top: 0; color: var(--ink); font-size: 18px; margin-bottom: 12px; }
+  .hcp-about p { margin: 0 0 12px; color: var(--ink-soft); font-size: 14px; line-height: 1.6; }
+  .hcp-about p:last-child { margin-bottom: 0; }
+  .hcp-about ul { margin: 0; padding-left: 20px; color: var(--ink-soft); font-size: 14px; line-height: 1.6;}
 
   /* ---------- Ticket form ---------- */
   .hcp-form-card{
     background:var(--card);
-    border:1.5px solid var(--line);
-    border-radius:8px;
-    padding:24px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:32px;
     position:relative;
-    margin-bottom:36px;
+    margin-bottom:40px;
+    box-shadow: var(--shadow);
   }
   .hcp-form-card.login-form::before{content:"WARDEN LOGIN";}
   .hcp-form-card::before{
     content:"RAISE A TICKET";
     position:absolute;
-    top:-11px;left:20px;
-    background:var(--amber);
-    color:var(--ink);
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;font-weight:600;letter-spacing:0.1em;
-    padding:3px 10px;
-    border-radius:3px;
+    top:-14px;left:24px;
+    background:var(--primary);
+    color:#fff;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;font-weight:600;letter-spacing:0.1em;
+    padding:4px 12px;
+    border-radius:4px;
+    box-shadow: 0 2px 4px rgba(37,99,235,0.3);
   }
-  .hcp-grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  .hcp-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+  .hcp-grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .hcp-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
   @media (max-width:640px){.hcp-grid2,.hcp-grid3{grid-template-columns:1fr;}}
-  .hcp-field{margin-bottom:16px;}
-  .hcp-submit-row{display:flex;align-items:center;justify-content:space-between;margin-top:6px;flex-wrap:wrap;gap:10px;}
+  .hcp-field{margin-bottom:20px;}
+  .hcp-submit-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:16px;}
   .hcp-btn-primary{
-    background:var(--ink);color:#fff;border:none;border-radius:var(--radius);
-    padding:12px 22px;font-size:14px;font-weight:600;letter-spacing:0.02em;
-    transition:background .15s;
+    background:var(--primary);color:#fff;border:none;border-radius:8px;
+    padding:12px 24px;font-size:14px;font-weight:600;letter-spacing:0.02em;
+    transition:background 0.2s, transform 0.1s;
+    box-shadow: var(--shadow-sm);
   }
-  .hcp-btn-primary:hover{background:var(--ink-soft);}
-  .hcp-btn-primary:disabled{opacity:0.6;cursor:default;}
-  .hcp-form-hint{font-size:12.5px;color:var(--slate);}
-  .hcp-error{color:var(--rust);font-size:12.5px;margin-top:4px;}
+  .hcp-btn-primary:hover{background:var(--primary-hover); transform: translateY(-1px);}
+  .hcp-btn-primary:active{transform: translateY(0);}
+  .hcp-btn-primary:disabled{opacity:0.6;cursor:default;transform:none;}
+  .hcp-form-hint{font-size:13px;color:var(--slate);}
+  .hcp-error{color:var(--rust);font-size:13px;margin-top:6px; background:#fef2f2; padding:8px 12px; border-radius:6px; border:1px solid #fecaca;}
   .hcp-success-flash{
-    background:#EAF2EC;border:1.5px solid var(--moss);color:#2F5A3D;
-    border-radius:var(--radius);padding:12px 14px;font-size:13.5px;margin-bottom:20px;
+    background:#ecfdf5;border:1px solid #10b981;color:#065f46;
+    border-radius:8px;padding:16px;font-size:14px;margin-bottom:24px;
     display:flex;justify-content:space-between;align-items:center;gap:12px;
+    box-shadow: var(--shadow-sm);
   }
-  .hcp-success-flash strong{font-family:'IBM Plex Mono',monospace;}
-  .hcp-success-flash button{background:none;border:none;color:#2F5A3D;font-size:16px;line-height:1;padding:0 2px;}
+  .hcp-success-flash strong{font-family:'JetBrains Mono',monospace; background:rgba(255,255,255,0.5); padding:2px 6px; border-radius:4px;}
+  .hcp-success-flash button{background:none;border:none;color:#065f46;font-size:20px;line-height:1;padding:0;opacity:0.7;}
+  .hcp-success-flash button:hover{opacity:1;}
 
   /* ---------- Filter / lookup bars ---------- */
   .hcp-lookup{
-    display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:18px;
+    display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;margin-bottom:24px;
   }
-  .hcp-lookup .hcp-field{margin-bottom:0;flex:1;min-width:180px;}
+  .hcp-lookup .hcp-field{margin-bottom:0;flex:1;min-width:200px;}
   .hcp-section-title{
-    font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.03em;
-    margin:0 0 14px;display:flex;align-items:center;gap:10px;
+    font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:0.04em;
+    margin:0 0 20px;display:flex;align-items:center;gap:12px;
+    color: var(--ink);
   }
   .hcp-count-pill{
-    font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--concrete-deep);
-    color:var(--ink-soft);padding:3px 9px;border-radius:10px;font-weight:600;
+    font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--concrete-deep);
+    color:var(--ink-soft);padding:4px 10px;border-radius:20px;font-weight:600;
   }
 
   /* ---------- Ticket card ---------- */
   .hcp-ticket{
     background:var(--card);
-    border:1.5px dashed #C8C4B4;
-    border-radius:6px;
-    padding:18px 18px 16px;
-    margin-bottom:14px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:24px;
+    margin-bottom:16px;
     position:relative;
     display:grid;
     grid-template-columns:1fr auto;
-    gap:12px;
+    gap:20px;
     align-items:start;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s;
   }
-  .hcp-ticket::before, .hcp-ticket::after{
-    content:"";
-    position:absolute;
-    width:16px;height:16px;
-    background:var(--concrete);
-    border-radius:50%;
-    top:50%;transform:translateY(-50%);
+  .hcp-ticket:hover {
+    box-shadow: var(--shadow);
   }
-  .hcp-ticket::before{left:-9px;}
-  .hcp-ticket::after{right:-9px;}
-  .hcp-ticket-main .top-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:6px;}
-  .hcp-ticket-id{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--slate);font-weight:600;}
+  .hcp-ticket-main .top-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;}
+  .hcp-ticket-id{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--primary);font-weight:600; background:#eff6ff; padding:4px 8px; border-radius:6px;}
   .hcp-ticket-cat{
-    font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;
-    background:var(--concrete-deep);color:var(--ink-soft);padding:2px 8px;border-radius:10px;
+    font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;
+    background:var(--concrete-deep);color:var(--ink-soft);padding:4px 10px;border-radius:20px;
   }
-  .hcp-ticket-title{font-size:15.5px;font-weight:600;margin:4px 0 4px;}
-  .hcp-ticket-desc{font-size:13.5px;color:var(--ink-soft);line-height:1.5;margin:0 0 8px;}
-  .hcp-ticket-meta{font-size:12px;color:var(--slate);display:flex;gap:14px;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;}
-  .hcp-ticket-remark{
-    margin-top:10px;font-size:12.5px;background:var(--concrete);border-left:3px solid var(--slateblue);
-    padding:8px 10px;border-radius:3px;color:var(--ink-soft);
-  }
-  .hcp-ticket-remark b{color:var(--ink);}
-
+  .hcp-ticket-title{font-size:18px;font-weight:600;margin:0 0 8px;}
+  .hcp-ticket-desc{font-size:14px;color:var(--ink-soft);line-height:1.6;margin:0 0 12px;}
+  .hcp-ticket-meta{font-size:12px;color:var(--slate);display:flex;gap:16px;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;}
+  
   .hcp-stamp{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;font-weight:700;letter-spacing:0.06em;
-    padding:6px 10px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;font-weight:700;letter-spacing:0.06em;
+    padding:8px 12px;
     border:2px solid currentColor;
-    border-radius:4px;
-    transform:rotate(-5deg);
+    border-radius:6px;
+    transform:rotate(-3deg);
     white-space:nowrap;
     height:fit-content;
+    box-shadow: 2px 2px 0 currentColor;
   }
   .hcp-stamp.pending{color:var(--amber-deep);}
-  .hcp-stamp.progress{color:var(--slateblue);}
+  .hcp-stamp.progress{color:var(--primary);}
   .hcp-stamp.resolved{color:var(--moss);}
   .hcp-stamp.rejected{color:var(--rust);}
 
-  .hcp-priority-dot{display:inline-flex;align-items:center;gap:5px;}
-  .hcp-priority-dot span.dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
-  .dot-low{background:var(--slate);}
+  .hcp-priority-dot{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;}
+  .hcp-priority-dot span.dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+  .dot-low{background:var(--moss);}
   .dot-medium{background:var(--amber);}
   .dot-high{background:var(--rust);}
-  .dot-urgent{background:var(--rust);box-shadow:0 0 0 3px rgba(193,80,46,0.18);}
+  .dot-emergency, .dot-urgent{background:var(--rust);box-shadow:0 0 0 4px rgba(239, 68, 68, 0.2);}
 
   .hcp-empty{
-    text-align:center;padding:40px 20px;color:var(--slate);font-size:14px;
-    border:1.5px dashed var(--line);border-radius:8px;background:var(--card);
+    text-align:center;padding:60px 20px;color:var(--slate);font-size:15px;
+    border:1.5px dashed var(--line);border-radius:var(--radius);background:var(--card);
+  }
+  
+  .hcp-timeline {
+    margin-top: 20px;
+    padding-left: 12px;
+    border-left: 2px solid var(--line);
+  }
+  .hcp-timeline-item {
+    position: relative;
+    padding-bottom: 16px;
+    font-size: 13px;
+  }
+  .hcp-timeline-item:last-child { padding-bottom: 0; }
+  .hcp-timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -17px;
+    top: 6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 2px solid #fff;
+  }
+  .hcp-timeline-meta {
+    font-size: 12px;
+    color: var(--slate);
+    margin-bottom: 4px;
+  }
+  .hcp-timeline-comment {
+    color: var(--ink);
+    background: var(--concrete);
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    display: inline-block;
+    margin-top: 4px;
   }
 
+  .hcp-image-thumb {
+    margin-top: 12px;
+    max-width: 160px;
+    max-height: 160px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s;
+  }
+  .hcp-image-thumb:hover { transform: scale(1.02); }
+
   /* ---------- Warden view ---------- */
-  .hcp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:26px;}
+  .hcp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}
   @media (max-width:640px){.hcp-stats{grid-template-columns:repeat(2,1fr);}}
   .hcp-stat{
-    background:var(--card);border:1.5px solid var(--line);border-radius:6px;
-    padding:14px 14px 12px;position:relative;overflow:hidden;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px;position:relative;overflow:hidden;
+    box-shadow: var(--shadow-sm);
   }
-  .hcp-stat .num{font-family:'Bebas Neue',sans-serif;font-size:34px;line-height:1;}
-  .hcp-stat .lbl{font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:var(--slate);font-weight:600;margin-top:4px;}
+  .hcp-stat .num{font-family:'Bebas Neue',sans-serif;font-size:42px;line-height:1;}
+  .hcp-stat .lbl{font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:var(--slate);font-weight:600;margin-top:8px;}
   .hcp-stat.acc-amber .num{color:var(--amber-deep);}
-  .hcp-stat.acc-slate .num{color:var(--slateblue);}
+  .hcp-stat.acc-slate .num{color:var(--primary);}
   .hcp-stat.acc-moss .num{color:var(--moss);}
   .hcp-stat.acc-rust .num{color:var(--rust);}
 
   .hcp-filterbar{
-    display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;
-    background:var(--card);border:1.5px solid var(--line);border-radius:6px;padding:14px;
+    display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;
+    box-shadow: var(--shadow-sm);
   }
-  .hcp-filterbar .hcp-field{margin-bottom:0;min-width:140px;flex:1;}
+  .hcp-filterbar .hcp-field{margin-bottom:0;min-width:160px;flex:1;}
   .hcp-clear-btn{
-    background:transparent;border:1.5px solid var(--line);border-radius:var(--radius);
-    padding:9px 14px;font-size:12.5px;color:var(--ink-soft);font-weight:600;align-self:flex-end;
+    background:transparent;border:1px solid var(--line);border-radius:8px;
+    padding:12px 16px;font-size:13px;color:var(--ink-soft);font-weight:600;align-self:flex-end;
+    transition: all 0.2s;
   }
-  .hcp-clear-btn:hover{border-color:var(--slate);}
+  .hcp-clear-btn:hover{background:var(--concrete);border-color:var(--slate);}
 
-  .hcp-manage-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center;}
-  .hcp-manage-row select{width:auto;flex:0 0 auto;}
-  .hcp-manage-row input{flex:1;min-width:160px;}
-  .hcp-manage-row button{
-    background:var(--ink);color:#fff;border:none;border-radius:var(--radius);
-    padding:9px 16px;font-size:12.5px;font-weight:600;
+  .hcp-manage-btn{
+    background:var(--concrete);color:var(--ink);border:1px solid var(--line);border-radius:6px;
+    padding:8px 16px;font-size:13px;font-weight:600;margin-top:16px;
+    transition: all 0.2s;
   }
-  .hcp-manage-row button:hover{background:var(--ink-soft);}
-  .hcp-manage-toggle{
-    background:none;border:none;color:var(--slateblue);font-size:12px;font-weight:600;
-    text-decoration:underline;padding:0;margin-top:8px;
-  }
+  .hcp-manage-btn:hover{background:var(--line);}
 
-  .hcp-loading{padding:60px 0;text-align:center;color:var(--slate);font-size:14px;}
+  .hcp-loading{padding:80px 0;text-align:center;color:var(--slate);font-size:16px; font-weight:500;}
 
   @media (prefers-reduced-motion: no-preference){
-    .hcp-ticket{animation:hcp-pop .25s ease-out;}
-    @keyframes hcp-pop{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+    .hcp-ticket{animation:hcp-pop .3s cubic-bezier(0.16, 1, 0.3, 1);}
+    @keyframes hcp-pop{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
   }
+
+  /* ---------- Modal ---------- */
+  .hcp-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15,23,42,0.8);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+  .hcp-modal {
+    background: var(--card);
+    width: 100%;
+    max-width: 440px;
+    border-radius: var(--radius);
+    padding: 32px;
+    box-shadow: var(--shadow-lg);
+  }
+  .hcp-modal h3 { margin-top:0; color:var(--ink); font-size: 20px; margin-bottom: 20px; }
+  .hcp-modal .hcp-btn-secondary {
+    background: transparent; color: var(--slate); border: none; font-weight: 600; font-size: 14px; padding: 10px 16px; border-radius:8px;
+  }
+  .hcp-modal .hcp-btn-secondary:hover { background: var(--concrete); }
 
   /* ---------- Login / role select screen ---------- */
   .hcp-login-wrap{
-    min-height:calc(100vh - 68px);
+    min-height:calc(100vh - 140px);
     display:flex;
     align-items:center;
     justify-content:center;
     padding:40px 20px;
   }
   .hcp-login-card{
-    max-width:520px;
+    max-width:560px;
     width:100%;
     text-align:center;
   }
-  .hcp-login-card h1{font-size:clamp(30px,6vw,42px);margin:0 0 10px;}
-  .hcp-login-card p{color:var(--ink-soft);font-size:15px;margin:0 0 30px;}
+  .hcp-login-card h1{font-size:clamp(36px,6vw,52px);margin:0 0 16px;}
+  .hcp-login-card p{color:var(--slate);font-size:16px;margin:0 0 40px;}
   .hcp-login-options{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:16px;
+    gap:20px;
   }
   @media (max-width:520px){.hcp-login-options{grid-template-columns:1fr;}}
   .hcp-login-option{
     background:var(--card);
-    border:1.5px solid var(--line);
-    border-radius:8px;
-    padding:28px 20px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:32px 24px;
     text-align:center;
-    transition:border-color .15s, transform .15s;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-sm);
   }
-  .hcp-login-option:hover{border-color:var(--ink);transform:translateY(-2px);}
-  .hcp-login-option .icon{font-size:30px;margin-bottom:10px;display:block;}
-  .hcp-login-option .role-name{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:0.03em;margin-bottom:4px;}
-  .hcp-login-option .role-desc{font-size:12.5px;color:var(--slate);}
+  .hcp-login-option:hover{border-color:var(--primary);transform:translateY(-4px); box-shadow:var(--shadow-lg);}
+  .hcp-login-option .icon{font-size:36px;margin-bottom:16px;display:block;}
+  .hcp-login-option .role-name{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:0.04em;margin-bottom:8px;color:var(--ink);}
+  .hcp-login-option .role-desc{font-size:14px;color:var(--slate); line-height: 1.5;}
 
   .hcp-back-link{
-    background:none;border:none;color:var(--slateblue);font-size:12.5px;font-weight:600;
-    text-decoration:underline;padding:0;margin-bottom:18px;
+    background:none;border:none;color:var(--primary);font-size:14px;font-weight:600;
+    padding:0;margin-bottom:24px; display:inline-flex; align-items:center; gap:6px;
   }
+  .hcp-back-link:hover{text-decoration:underline;}
+
+  /* ---------- Footer ---------- */
+  .hcp-footer {
+    background: #0f172a;
+    color: #94a3b8;
+    padding: 24px;
+    text-align: center;
+    font-size: 13px;
+    border-top: 1px solid #1e293b;
+    margin-top: auto;
+  }
+  .hcp-footer-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .hcp-footer a { color: #e2e8f0; text-decoration: none; font-weight: 500; }
+  .hcp-footer a:hover { text-decoration: underline; }
+
+  /* ---------- Announcements ---------- */
+  @keyframes slideDownFade {
+      from { opacity: 0; transform: translateY(-15px); }
+      to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes megaphone-pulse {
+      0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 2px rgba(255,193,7,0.8)); }
+      15% { transform: scale(1.15) rotate(-10deg); filter: drop-shadow(0 0 8px rgba(255,193,7,1)); }
+      30% { transform: scale(1.15) rotate(10deg); }
+      45% { transform: scale(1.15) rotate(-8deg); }
+      60% { transform: scale(1) rotate(0deg); }
+      100% { transform: scale(1) rotate(0deg); }
+  }
+  .announcement-banner {
+      animation: slideDownFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border-left: 5px solid #f59e0b;
+      color: #f8fafc;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+  }
+  .megaphone-icon {
+      font-size: 1.8rem;
+      animation: megaphone-pulse 2.5s infinite ease-in-out;
+      flex-shrink: 0;
+      margin-top: 2px;
+  }
+  .announcement-badge {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+      display: inline-block;
+  }
+  .badge-Urgent { background: #ef4444; color: #ffffff; }
+  .badge-Maintenance { background: #3b82f6; color: #ffffff; }
+  .badge-General { background: #10b981; color: #ffffff; }
 </style>
 </head>
 <body>
 
 <div id="hcp-root">
   <div id="hcp-nav-slot"></div>
-  <div class="hcp-main" id="hcp-main"></div>
+  <div class="hcp-main-wrapper">
+    <div class="hcp-main" id="hcp-main"></div>
+  </div>
+  <div id="hcp-footer-slot"></div>
+  <div id="hcp-modal-slot"></div>
 </div>
 
 <script>
 (function(){
-  // ------------------------------------------------------------
-  // Point this at wherever backend/api/ is served from.
-  // Same-origin deployments (frontend + backend on one host) can
-  // leave this as a relative path.
-  // ------------------------------------------------------------
   const API_BASE = '../backend/api';
 
-  const CATEGORIES = ['Electrical','Plumbing','Furniture','Wi-Fi / Internet','Water Supply','Cleanliness / Pest','Security / Safety','Mess / Food','Other'];
-  const PRIORITIES = ['Low','Medium','High','Urgent'];
+  const CATEGORIES = ['Electrical','Plumbing','Carpentry','Wi-Fi / Internet','Water Supply','Cleanliness / Pest','Cleanliness','Security / Safety','Mess / Food','Furniture','Other'];
+  const PRIORITIES = ['Low','Medium','High','Emergency','Urgent'];
   const STATUSES = ['Pending','In Progress','Resolved','Rejected'];
 
   let state = {
@@ -331,25 +520,30 @@
 
     tickets: [],
     counts: { pending:0, inProgress:0, resolved:0, urgentOpen:0 },
+    analytics: { total_open:0, total_in_progress:0, total_resolved:0, most_common_category:'N/A' },
     loading: false,
 
     lastTicket: null,
     formError: '',
     submitBusy: false,
 
-    studentLookup: '',
+    studentLookupTicket: '',
+    studentLookupRoom: '',
     filters: { status:'All', category:'All', priority:'All', search:'' },
-    openManage: {},
+    
+    modalTicketId: null,
   };
 
   let lookupDebounce = null;
   let searchDebounce = null;
 
   function escapeHtml(str){
+    if (str == null) return '';
     return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
   function fmtDate(iso){
+    if (!iso) return '';
     const d = new Date(iso.replace(' ', 'T'));
     return d.toLocaleDateString(undefined,{day:'2-digit',month:'short',year:'numeric'}) + ' · ' +
            d.toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});
@@ -358,7 +552,7 @@
   async function api(path, options){
     options = options || {};
     options.credentials = 'include';
-    if(options.body){
+    if(options.body && !(options.body instanceof FormData)){
       options.headers = Object.assign({'Content-Type':'application/json'}, options.headers||{});
     }
     try{
@@ -382,7 +576,7 @@
         await loadWardenTickets();
       }
     }catch(e){
-      // ignore — just show the login screen
+      // ignore
     }finally{
       render();
     }
@@ -397,7 +591,8 @@
   async function chooseStudent(){
     state.role = 'student';
     state.tickets = [];
-    state.studentLookup = '';
+    state.studentLookupTicket = '';
+    state.studentLookupRoom = '';
     render();
   }
 
@@ -449,16 +644,55 @@
     }
   }
 
+  // ---------- Announcements ----------
+
+  async function loadActiveAnnouncements() {
+      try {
+          const { data } = await api('get_announcements.php');
+          const container = document.getElementById('student-announcements-container');
+          if (!container) return;
+          
+          if (data.ok && data.count > 0) {
+              container.innerHTML = '';
+              
+              data.data.forEach(notice => {
+                  const noticeCard = document.createElement('div');
+                  noticeCard.className = 'announcement-banner';
+                  noticeCard.innerHTML = `
+                      <div class="megaphone-icon">📢</div>
+                      <div style="flex-grow: 1;">
+                          <div>
+                              <span class="announcement-badge badge-${notice.priority_tag}">${notice.priority_tag}</span>
+                              <strong style="font-size: 1.1rem; margin-left: 8px; color: #f1f5f9;">${escapeHtml(notice.title)}</strong>
+                          </div>
+                          <p style="margin: 8px 0 4px 0; color: #cbd5e1; line-height: 1.5;">${escapeHtml(notice.message)}</p>
+                          <small style="color: #64748b; font-size: 0.8rem;">
+                              Valid until: ${new Date(notice.expires_at.replace(' ', 'T')).toLocaleString(undefined, {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'})}
+                          </small>
+                      </div>
+                  `;
+                  container.appendChild(noticeCard);
+              });
+              
+              container.style.display = 'block';
+          } else {
+              container.style.display = 'none';
+          }
+      } catch (error) {
+          console.error('Failed to load announcements:', error);
+      }
+  }
+
   // ---------- Student actions ----------
 
   async function submitComplaint(formEl){
-    const data = Object.fromEntries(new FormData(formEl).entries());
+    const formData = new FormData(formEl);
     state.submitBusy = true;
     render();
 
     const res = await api('submit_complaint.php', {
       method: 'POST',
-      body: JSON.stringify(data),
+      body: formData,
     });
 
     state.submitBusy = false;
@@ -471,16 +705,18 @@
 
     state.formError = '';
     state.lastTicket = res.data.ticket;
-    state.studentLookup = res.data.ticket.student_name;
+    state.studentLookupTicket = res.data.ticket.ticket_no;
+    state.studentLookupRoom = res.data.ticket.room_number;
     formEl.reset();
     await runStudentLookup();
     render();
   }
 
   async function runStudentLookup(){
-    const q = state.studentLookup.trim();
-    if(!q){ state.tickets = []; return; }
-    const { data } = await api(`list_complaints.php?mode=student&lookup=${encodeURIComponent(q)}`);
+    const t = state.studentLookupTicket.trim();
+    const r = state.studentLookupRoom.trim();
+    if(!t || !r){ state.tickets = []; return; }
+    const { data } = await api(`list_complaints.php?mode=student&lookup_ticket=${encodeURIComponent(t)}&room_number=${encodeURIComponent(r)}`);
     state.tickets = data.ok ? data.tickets : [];
   }
 
@@ -496,17 +732,22 @@
     if(data.ok){
       state.tickets = data.tickets;
       state.counts = data.counts;
+      if (data.analytics) state.analytics = data.analytics;
     }
   }
 
   async function updateStatus(id, status, remark){
     const { data } = await api('update_status.php', {
       method: 'POST',
-      body: JSON.stringify({ id, status, remark }),
+      body: JSON.stringify({ complaint_id: id, status, comment: remark }),
     });
     if(data.ok){
+      state.modalTicketId = null;
+      renderModal(); // Clears the modal from the screen
       await loadWardenTickets();
       render();
+    } else {
+      alert(data.error || 'Failed to update ticket');
     }
   }
 
@@ -517,14 +758,29 @@
     const roleLabel = state.role==='student' ? 'Student Portal' : state.role==='warden' ? 'Warden Portal' : '';
     el.innerHTML = `
       <div class="hcp-nav">
-        <div class="hcp-brand">
-          <span class="display">HOSTEL DESK</span>
-          <span class="tag mono">${state.role ? roleLabel.toUpperCase() : 'MAINTENANCE &amp; COMPLAINTS'}</span>
+        <div class="hcp-nav-inner">
+          <div class="hcp-brand">
+            <span class="display">HOSTEL DESK</span>
+            <span class="tag mono">${state.role ? roleLabel.toUpperCase() : 'MAINTENANCE SYSTEM'}</span>
+          </div>
+          ${state.role ? `<button class="hcp-switch-role-btn" id="hcp-switch-role">${state.role==='warden' ? 'Log out' : 'Switch portal'}</button>` : ''}
         </div>
-        ${state.role ? `<button class="hcp-switch-role-btn" id="hcp-switch-role">${state.role==='warden' ? 'Log out' : 'Switch portal'}</button>` : ''}
       </div>`;
     const switchBtn = document.getElementById('hcp-switch-role');
     if(switchBtn) switchBtn.addEventListener('click', switchPortal);
+  }
+  
+  function renderFooter() {
+    const el = document.getElementById('hcp-footer-slot');
+    const year = new Date().getFullYear();
+    el.innerHTML = `
+      <footer class="hcp-footer">
+        <div class="hcp-footer-inner">
+          <div>&copy; ${year} Hostel Desk Management System. All rights reserved.</div>
+          <div>Need help? <a href="#">Contact Support</a></div>
+        </div>
+      </footer>
+    `;
   }
 
   function renderLoginScreen(){
@@ -534,7 +790,10 @@
       container.innerHTML = `
         <div class="hcp-login-wrap">
           <div style="max-width:420px;width:100%;">
-            <button class="hcp-back-link" id="hcp-back-to-choose">&larr; Back</button>
+            <button class="hcp-back-link" id="hcp-back-to-choose">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              Back
+            </button>
             <form class="hcp-form-card login-form" id="hcp-warden-login-form">
               <div class="hcp-field">
                 <label for="hcp-w-username">Username</label>
@@ -547,7 +806,7 @@
               ${state.loginError ? `<div class="hcp-error">${escapeHtml(state.loginError)}</div>` : ''}
               <div class="hcp-submit-row">
                 <span class="hcp-form-hint">Staff access only.</span>
-                <button type="submit" class="hcp-btn-primary" ${state.loginBusy?'disabled':''}>${state.loginBusy?'Logging in…':'Log in'}</button>
+                <button type="submit" class="hcp-btn-primary" ${state.loginBusy?'disabled':''}>${state.loginBusy?'Logging in…':'Secure Log In'}</button>
               </div>
             </form>
           </div>
@@ -565,18 +824,18 @@
     container.innerHTML = `
       <div class="hcp-login-wrap">
         <div class="hcp-login-card">
-          <h1 class="display">WELCOME TO HOSTEL DESK</h1>
-          <p>Choose how you'd like to log in to continue.</p>
+          <h1 class="display">HOSTEL DESK PORTAL</h1>
+          <p>Streamlining maintenance and facility operations. Choose your portal to continue.</p>
           <div class="hcp-login-options">
             <button class="hcp-login-option" id="hcp-choose-student">
               <span class="icon">🎓</span>
               <div class="role-name">STUDENT</div>
-              <div class="role-desc">Raise a ticket &amp; track your complaints</div>
+              <div class="role-desc">Raise a ticket, upload photos, &amp; track your complaints</div>
             </button>
             <button class="hcp-login-option" id="hcp-choose-warden">
               <span class="icon">🗝️</span>
               <div class="role-name">WARDEN</div>
-              <div class="role-desc">Review, filter &amp; resolve tickets</div>
+              <div class="role-desc">Review issues, update statuses, &amp; manage operations</div>
             </button>
           </div>
         </div>
@@ -592,7 +851,10 @@
   }
 
   function priorityDot(p){
-    const cls = {'Low':'dot-low','Medium':'dot-medium','High':'dot-high','Urgent':'dot-urgent'}[p]||'dot-low';
+    let cls = 'dot-low';
+    if(p==='Medium') cls = 'dot-medium';
+    if(p==='High') cls = 'dot-high';
+    if(p==='Emergency' || p==='Urgent') cls = 'dot-emergency';
     return `<span class="hcp-priority-dot"><span class="dot ${cls}"></span>${escapeHtml(p)}</span>`;
   }
 
@@ -600,24 +862,25 @@
     const cls = {'Pending':'pending','In Progress':'progress','Resolved':'resolved','Rejected':'rejected'}[status]||'pending';
     return `<div class="hcp-stamp ${cls}">${escapeHtml(status.toUpperCase())}</div>`;
   }
+  
+  function renderTimeline(history) {
+    if (!history || !history.length) return '';
+    return `<div class="hcp-timeline">
+      ${history.map(h => `
+        <div class="hcp-timeline-item">
+          <div class="hcp-timeline-meta">${fmtDate(h.created_at)} &mdash; Status changed to <strong>${escapeHtml(h.new_status)}</strong>${h.warden_username ? ` by ${escapeHtml(h.warden_username)}` : ''}</div>
+          <div class="hcp-timeline-comment">${escapeHtml(h.comment)}</div>
+        </div>
+      `).join('')}
+    </div>`;
+  }
 
   function renderTicketCard(c, opts){
     opts = opts || {};
-    const manageOpen = !!state.openManage[c.id];
-    const remarkHtml = c.remark ? `<div class="hcp-ticket-remark"><b>Warden's note:</b> ${escapeHtml(c.remark)}</div>` : '';
+    const imgHtml = c.image_path ? `<a href="../backend/${escapeHtml(c.image_path)}" target="_blank"><img src="../backend/${escapeHtml(c.image_path)}" class="hcp-image-thumb" alt="Complaint Evidence" /></a>` : '';
     let manageHtml = '';
     if(opts.manageable){
-      manageHtml = `
-        <button class="hcp-manage-toggle" data-toggle="${c.id}">${manageOpen ? 'Close' : 'Update status'}</button>
-        ${manageOpen ? `
-        <div class="hcp-manage-row">
-          <select data-status-select="${c.id}">
-            ${STATUSES.map(s=>`<option value="${s}" ${s===c.status?'selected':''}>${s}</option>`).join('')}
-          </select>
-          <input type="text" placeholder="Add a note for the student (optional)" data-remark-input="${c.id}" value="${escapeHtml(c.remark||'')}"/>
-          <button data-save="${c.id}">Save</button>
-        </div>` : ''}
-      `;
+      manageHtml = `<button class="hcp-manage-btn" onclick="openUpdateModal(${c.id}, '${escapeHtml(c.status)}')">Update / Comment</button>`;
     }
     return `
       <div class="hcp-ticket">
@@ -627,50 +890,72 @@
             <span class="hcp-ticket-cat">${escapeHtml(c.category)}</span>
             ${priorityDot(c.priority)}
           </div>
-          <div class="hcp-ticket-title">Room ${escapeHtml(c.room_number)} · ${escapeHtml(c.block)}</div>
+          <div class="hcp-ticket-title">Room ${escapeHtml(c.room_number)} &middot; ${escapeHtml(c.block)}</div>
           <p class="hcp-ticket-desc">${escapeHtml(c.description)}</p>
-          <div class="hcp-ticket-meta">
-            <span>${escapeHtml(c.student_name)}</span>
-            <span>Filed ${fmtDate(c.created_at)}</span>
-            ${c.updated_at!==c.created_at ? `<span>Updated ${fmtDate(c.updated_at)}</span>` : ''}
+          ${imgHtml}
+          <div class="hcp-ticket-meta" style="margin-top:12px">
+            <span>By ${escapeHtml(c.student_name)}</span>
+            <span>Filed: ${fmtDate(c.created_at)}</span>
+            ${c.updated_at!==c.created_at ? `<span>Last Updated: ${fmtDate(c.updated_at)}</span>` : ''}
           </div>
-          ${remarkHtml}
+          ${renderTimeline(c.history)}
           ${manageHtml}
         </div>
         ${stampFor(c.status)}
       </div>`;
   }
 
+  window.copyTicketNumber = function() {
+    const ticketText = document.getElementById('display-ticket-number').textContent;
+    const copyBtn = document.getElementById('copy-btn');
+
+    navigator.clipboard.writeText(ticketText).then(() => {
+        copyBtn.textContent = 'Copied!';
+        copyBtn.style.background = '#2e7d32';
+        setTimeout(() => {
+            const btn = document.getElementById('copy-btn');
+            if (btn) {
+                btn.textContent = 'Copy Ticket Number';
+                btn.style.background = '#4caf50';
+            }
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy text: ', err);
+        alert('Please manually copy your ticket number: ' + ticketText);
+    });
+  }
+
   function renderStudentView(){
     const container = document.getElementById('hcp-main');
     const flash = state.lastTicket ? `
-      <div class="hcp-success-flash">
-        <span>Ticket <strong>${escapeHtml(state.lastTicket.ticket_no)}</strong> filed. The warden's team will pick it up.</span>
-        <button aria-label="Dismiss" data-dismiss-flash>×</button>
+      <div class="hcp-success-flash" style="display: flex; flex-direction: column; align-items: flex-start; gap: 16px;">
+        <div style="width: 100%; display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <h3 style="margin: 0 0 8px 0; color: #065f46; font-size: 18px;">Ticket Submitted Successfully!</h3>
+                <p style="margin: 0; color: #065f46;">Your ticket number is <strong id="display-ticket-number" style="font-size: 1.1em; background: rgba(255,255,255,0.8); padding: 4px 8px; border-radius: 4px;">${escapeHtml(state.lastTicket.ticket_no)}</strong></p>
+            </div>
+            <button aria-label="Dismiss" data-dismiss-flash>&times;</button>
+        </div>
+        <div style="display: flex; gap: 12px; margin-top: 4px;">
+            <button id="copy-btn" onclick="copyTicketNumber()" style="background: #4caf50; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; transition: background 0.2s;">Copy Ticket Number</button>
+            <button onclick="state.lastTicket=null; render();" style="background: transparent; color: #065f46; border: 1.5px solid #10b981; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px;">Submit Another Request</button>
+        </div>
       </div>` : '';
 
-    const lookupName = state.studentLookup.trim();
-
-    container.innerHTML = `
-      <div class="hcp-hero">
-        <h1 class="display">SOMETHING NOT WORKING<br/>IN YOUR ROOM?</h1>
-        <p>File a ticket below and the warden's office will follow up. Keep your name or room number handy to track it.</p>
-      </div>
-
-      ${flash}
-
+    const formHtml = state.lastTicket ? '' : `
       <form class="hcp-form-card" id="hcp-complaint-form">
+        <input type="text" name="bot_check" style="display:none;" tabindex="-1" />
         <div class="hcp-grid3">
           <div class="hcp-field">
-            <label for="hcp-name">Your name</label>
+            <label for="hcp-name">Full Name</label>
             <input id="hcp-name" name="studentName" type="text" placeholder="e.g. Aditi Sharma" required />
           </div>
           <div class="hcp-field">
-            <label for="hcp-room">Room number</label>
+            <label for="hcp-room">Room Number</label>
             <input id="hcp-room" name="roomNumber" type="text" placeholder="e.g. B-204" required />
           </div>
           <div class="hcp-field">
-            <label for="hcp-block">Hostel block</label>
+            <label for="hcp-block">Hostel Block</label>
             <input id="hcp-block" name="block" type="text" placeholder="e.g. Block B" />
           </div>
         </div>
@@ -680,103 +965,243 @@
             <select id="hcp-cat" name="category">${optionList(CATEGORIES,false)}</select>
           </div>
           <div class="hcp-field">
-            <label for="hcp-pri">Priority</label>
+            <label for="hcp-pri">Priority Level</label>
             <select id="hcp-pri" name="priority">${optionList(PRIORITIES,false)}</select>
           </div>
         </div>
         <div class="hcp-field">
-          <label for="hcp-desc">What's going on?</label>
-          <textarea id="hcp-desc" name="description" rows="4" placeholder="Describe the issue: what's broken, since when, and anything the warden should know."></textarea>
+          <label for="hcp-desc">Issue Description</label>
+          <textarea id="hcp-desc" name="description" rows="4" placeholder="Describe the issue in detail: what's broken, since when, and any specific context the maintenance team should know." required></textarea>
+        </div>
+        <div class="hcp-field">
+          <label for="hcp-photo">Upload Evidence (Optional)</label>
+          <input id="hcp-photo" name="photo" type="file" accept="image/png, image/jpeg, image/webp" />
+          <div class="hcp-form-hint" style="margin-top:6px;">Supported formats: JPG, PNG, WebP (Max: 5MB).</div>
         </div>
         ${state.formError ? `<div class="hcp-error">${escapeHtml(state.formError)}</div>` : ''}
         <div class="hcp-submit-row">
-          <span class="hcp-form-hint">Your ticket is visible to hostel staff and other students checking status.</span>
-          <button type="submit" class="hcp-btn-primary" ${state.submitBusy?'disabled':''}>${state.submitBusy?'Submitting…':'Raise ticket'}</button>
+          <span class="hcp-form-hint">By submitting, you agree to our maintenance guidelines.</span>
+          <button type="submit" class="hcp-btn-primary" ${state.submitBusy?'disabled':''}>${state.submitBusy?'Submitting Request…':'Submit Request'}</button>
         </div>
       </form>
+    `;
 
-      <h2 class="hcp-section-title">TRACK YOUR TICKETS</h2>
+    const lookupT = state.studentLookupTicket.trim();
+    const lookupR = state.studentLookupRoom.trim();
+
+    container.innerHTML = `
+      <div id="student-announcements-container" style="display: none;"></div>
+
+      <div class="hcp-hero">
+        <h1 class="display">MAINTENANCE REQUEST</h1>
+        <p>File a ticket below and the operations team will follow up. Keep your ticket number and room number handy to track the resolution progress.</p>
+      </div>
+
+      ${flash}
+      ${formHtml}
+
+      <h2 class="hcp-section-title">TRACK YOUR TICKET</h2>
       <div class="hcp-lookup">
         <div class="hcp-field">
-          <label for="hcp-lookup">Search by your name or room number</label>
-          <input id="hcp-lookup" type="text" placeholder="e.g. Aditi or B-204" value="${escapeHtml(state.studentLookup)}" />
+          <label for="hcp-lookup-ticket">Ticket Number</label>
+          <input id="hcp-lookup-ticket" type="text" placeholder="e.g. HC-2026-0001" value="${escapeHtml(state.studentLookupTicket)}" />
+        </div>
+        <div class="hcp-field">
+          <label for="hcp-lookup-room">Room Number</label>
+          <input id="hcp-lookup-room" type="text" placeholder="e.g. B-204" value="${escapeHtml(state.studentLookupRoom)}" />
         </div>
       </div>
-      <div id="hcp-my-tickets">
-        ${!lookupName ? `<div class="hcp-empty">Enter your name or room number above to see your tickets.</div>` :
-          state.tickets.length===0 ? `<div class="hcp-empty">No tickets found for "${escapeHtml(state.studentLookup)}" yet.</div>` :
+      <div id="hcp-my-tickets" style="margin-bottom: 40px;">
+        ${(!lookupT || !lookupR) ? `<div class="hcp-empty">Enter your exact ticket number and room number above to securely track your ticket.</div>` :
+          state.tickets.length===0 ? `<div class="hcp-empty">No tickets found matching those details.</div>` :
           state.tickets.map(c=>renderTicketCard(c,{manageable:false})).join('')}
+      </div>
+      
+      <div class="hcp-about">
+        <h3>About Hostel Desk</h3>
+        <p>Hostel Desk is a comprehensive facility management platform designed to streamline communication between residents and the operations team. Our goal is to ensure a safe, clean, and comfortable living environment for everyone.</p>
+        <p><strong>How it works:</strong></p>
+        <ul>
+          <li>Submit a detailed ticket categorizing your issue.</li>
+          <li>Attach photo evidence to expedite the assessment process.</li>
+          <li>Our warden team will review and assign maintenance staff accordingly.</li>
+          <li>Track real-time updates and comments directly via your Ticket Number.</li>
+        </ul>
       </div>
     `;
 
-    document.getElementById('hcp-complaint-form').addEventListener('submit', e=>{
-      e.preventDefault();
-      submitComplaint(e.target);
-    });
+    const formEl = document.getElementById('hcp-complaint-form');
+    if (formEl) {
+      formEl.addEventListener('submit', e=>{
+        e.preventDefault();
+        submitComplaint(e.target);
+      });
+    }
     const dismissBtn = container.querySelector('[data-dismiss-flash]');
     if(dismissBtn) dismissBtn.addEventListener('click', ()=>{ state.lastTicket=null; render(); });
 
-    const lookupInput = document.getElementById('hcp-lookup');
-    lookupInput.addEventListener('input', e=>{
-      state.studentLookup = e.target.value;
+    const handleLookup = () => {
+      state.studentLookupTicket = document.getElementById('hcp-lookup-ticket').value;
+      state.studentLookupRoom = document.getElementById('hcp-lookup-room').value;
       clearTimeout(lookupDebounce);
       lookupDebounce = setTimeout(async ()=>{
         await runStudentLookup();
         renderStudentTicketsOnly();
       }, 300);
-    });
+    };
+
+    document.getElementById('hcp-lookup-ticket').addEventListener('input', handleLookup);
+    document.getElementById('hcp-lookup-room').addEventListener('input', handleLookup);
+    
+    // Load announcements when student view is rendered
+    loadActiveAnnouncements();
   }
 
   function renderStudentTicketsOnly(){
-    const lookupName = state.studentLookup.trim();
+    const lookupT = state.studentLookupTicket.trim();
+    const lookupR = state.studentLookupRoom.trim();
     document.getElementById('hcp-my-tickets').innerHTML =
-      !lookupName ? `<div class="hcp-empty">Enter your name or room number above to see your tickets.</div>` :
-      state.tickets.length===0 ? `<div class="hcp-empty">No tickets found for "${escapeHtml(state.studentLookup)}" yet.</div>` :
+      (!lookupT || !lookupR) ? `<div class="hcp-empty">Enter your exact ticket number and room number above to securely track your ticket.</div>` :
+      state.tickets.length===0 ? `<div class="hcp-empty">No tickets found matching those details.</div>` :
       state.tickets.map(c=>renderTicketCard(c,{manageable:false})).join('');
+  }
+
+  window.openUpdateModal = function(id, currentStatus) {
+    state.modalTicketId = id;
+    state.modalStatus = currentStatus;
+    renderModal();
+  }
+
+  window.closeUpdateModal = function() {
+    state.modalTicketId = null;
+    renderModal();
+  }
+
+  function renderModal() {
+    const slot = document.getElementById('hcp-modal-slot');
+    if (!state.modalTicketId) {
+      slot.innerHTML = '';
+      return;
+    }
+    
+    slot.innerHTML = `
+      <div class="hcp-modal-overlay">
+        <div class="hcp-modal">
+          <h3 class="display">UPDATE TICKET STATUS</h3>
+          <form id="hcp-modal-form">
+            <div class="hcp-field">
+              <label>New Status</label>
+              <select id="hcp-modal-status">
+                ${STATUSES.map(s=>`<option value="${s}" ${s===state.modalStatus?'selected':''}>${s}</option>`).join('')}
+              </select>
+            </div>
+            <div class="hcp-field">
+              <label>Actionable Comment</label>
+              <textarea id="hcp-modal-comment" rows="4" required placeholder="Provide an explanation for this update. This will be visible to the student in their timeline..."></textarea>
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap: 12px; margin-top:24px;">
+              <button type="button" class="hcp-btn-secondary" onclick="closeUpdateModal()">Cancel</button>
+              <button type="submit" class="hcp-btn-primary">Save Update</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('hcp-modal-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const st = document.getElementById('hcp-modal-status').value;
+      const rem = document.getElementById('hcp-modal-comment').value;
+      updateStatus(state.modalTicketId, st, rem);
+    });
   }
 
   function renderWardenView(){
     const container = document.getElementById('hcp-main');
-    const counts = state.counts;
+    const a = state.analytics;
     const f = state.filters;
+
+    const defaultExpiry = new Date();
+    defaultExpiry.setHours(defaultExpiry.getHours() + 48);
+    // Remove the Z and slice to 16 for local datetime input
+    const defaultExpiryStr = new Date(defaultExpiry.getTime() - (defaultExpiry.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
 
     container.innerHTML = `
       <div class="hcp-hero">
-        <h1 class="display">WARDEN DESK</h1>
-        <p>Welcome, ${escapeHtml(state.warden ? state.warden.full_name : '')}. Update status as work happens so students know where things stand.</p>
+        <h1 class="display">WARDEN DASHBOARD</h1>
+        <p>Welcome, <strong>${escapeHtml(state.warden ? state.warden.full_name : '')}</strong>. Monitor operations, assign tasks, and keep students informed.</p>
+      </div>
+
+      <!-- Warden Broadcast Control Panel -->
+      <div style="background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; margin-bottom: 32px; box-shadow: var(--shadow-sm);">
+          <h3 style="margin-top: 0; color: var(--ink); border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 20px;">
+              📢 Broadcast Hostel-Wide Announcement
+          </h3>
+          
+          <form id="warden-announcement-form">
+              <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px;">
+                  <div class="hcp-field" style="margin-bottom:0">
+                      <label>Title / Headline</label>
+                      <input type="text" name="title" required placeholder="e.g., Water Supply Cut Tomorrow">
+                  </div>
+                  <div class="hcp-field" style="margin-bottom:0">
+                      <label>Category Tag</label>
+                      <select name="priority_tag">
+                          <option value="General">General Notice</option>
+                          <option value="Urgent">Urgent / Alert</option>
+                          <option value="Maintenance">Maintenance</option>
+                      </select>
+                  </div>
+              </div>
+
+              <div class="hcp-field" style="margin-bottom: 20px;">
+                  <label>Announcement Message</label>
+                  <textarea name="message" required rows="3" placeholder="Provide full details for residents..."></textarea>
+              </div>
+
+              <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap:wrap;">
+                  <div class="hcp-field" style="margin-bottom:0; flex-grow:1; max-width:300px;">
+                      <label>Display Until</label>
+                      <input type="datetime-local" name="expires_at" required id="announcement-expiry" value="${defaultExpiryStr}">
+                  </div>
+                  <button type="submit" class="hcp-btn-primary">
+                      Publish to All Students
+                  </button>
+              </div>
+          </form>
       </div>
 
       <div class="hcp-stats">
-        <div class="hcp-stat acc-amber"><div class="num">${counts.pending}</div><div class="lbl">Pending</div></div>
-        <div class="hcp-stat acc-slate"><div class="num">${counts.inProgress}</div><div class="lbl">In Progress</div></div>
-        <div class="hcp-stat acc-moss"><div class="num">${counts.resolved}</div><div class="lbl">Resolved</div></div>
-        <div class="hcp-stat acc-rust"><div class="num">${counts.urgentOpen}</div><div class="lbl">Open &amp; Urgent</div></div>
+        <div class="hcp-stat acc-amber"><div class="num">${a.total_open}</div><div class="lbl">Open Tickets</div></div>
+        <div class="hcp-stat acc-slate"><div class="num">${a.total_in_progress}</div><div class="lbl">In Progress</div></div>
+        <div class="hcp-stat acc-moss"><div class="num">${a.total_resolved}</div><div class="lbl">Resolved</div></div>
+        <div class="hcp-stat acc-rust"><div class="num" style="font-size:32px; line-height:42px;">${escapeHtml(a.most_common_category)}</div><div class="lbl">Top Issue</div></div>
       </div>
 
       <div class="hcp-filterbar">
         <div class="hcp-field">
-          <label for="hcp-f-search">Search</label>
+          <label for="hcp-f-search">Search Tickets</label>
           <input id="hcp-f-search" type="text" placeholder="Name, room, or ticket no." value="${escapeHtml(f.search)}"/>
         </div>
         <div class="hcp-field">
-          <label for="hcp-f-status">Status</label>
+          <label for="hcp-f-status">Filter by Status</label>
           <select id="hcp-f-status">${optionList(STATUSES,true)}</select>
         </div>
         <div class="hcp-field">
-          <label for="hcp-f-category">Category</label>
+          <label for="hcp-f-category">Filter by Category</label>
           <select id="hcp-f-category">${optionList(CATEGORIES,true)}</select>
         </div>
         <div class="hcp-field">
-          <label for="hcp-f-priority">Priority</label>
+          <label for="hcp-f-priority">Filter by Priority</label>
           <select id="hcp-f-priority">${optionList(PRIORITIES,true)}</select>
         </div>
         <button class="hcp-clear-btn" id="hcp-clear-filters">Clear filters</button>
       </div>
 
-      <h2 class="hcp-section-title">TICKETS <span class="hcp-count-pill">${state.tickets.length}</span></h2>
+      <h2 class="hcp-section-title">ACTIVE TICKETS <span class="hcp-count-pill">${state.tickets.length}</span></h2>
       <div id="hcp-warden-list">
-        ${state.loading ? `<div class="hcp-loading">Loading tickets…</div>` :
-          state.tickets.length===0 ? `<div class="hcp-empty">No tickets match those filters. Try clearing them.</div>` :
+        ${state.loading ? `<div class="hcp-loading">Loading records…</div>` :
+          state.tickets.length===0 ? `<div class="hcp-empty">No tickets match current filters.</div>` :
           state.tickets.map(c=>renderTicketCard(c,{manageable:true})).join('')}
       </div>
     `;
@@ -799,40 +1224,52 @@
       render();
     });
 
-    attachWardenListHandlers();
-  }
-
-  function attachWardenListHandlers(){
-    document.querySelectorAll('[data-toggle]').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const id = btn.dataset.toggle;
-        state.openManage[id] = !state.openManage[id];
-        render();
-      });
-    });
-    document.querySelectorAll('[data-save]').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const id = btn.dataset.save;
-        const statusSel = document.querySelector(`[data-status-select="${id}"]`);
-        const remarkInput = document.querySelector(`[data-remark-input="${id}"]`);
-        updateStatus(id, statusSel.value, remarkInput.value.trim());
-      });
+    document.getElementById('warden-announcement-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        try {
+            const res = await api('post_announcement.php', {
+                method: 'POST',
+                body: formData
+            });
+            const result = res.data;
+            
+            if (result.ok) {
+                alert('Announcement published successfully!');
+                this.reset();
+                // Optionally reset the date to 48 hours again
+                const expiryInput = document.getElementById('announcement-expiry');
+                if (expiryInput) {
+                    const defaultDate = new Date();
+                    defaultDate.setHours(defaultDate.getHours() + 48);
+                    expiryInput.value = new Date(defaultDate.getTime() - (defaultDate.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+                }
+            } else {
+                alert(result.error || 'Error broadcasting notice.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Could not connect to announcement server.');
+        }
     });
   }
 
   function render(){
     renderNav();
-    if(!state.role){
+    renderFooter();
+    if(state.role === null){
       renderLoginScreen();
-      return;
+    }else if(state.role === 'student'){
+      renderStudentView();
+    }else if(state.role === 'warden'){
+      renderWardenView();
     }
-    if(state.role==='student') renderStudentView();
-    else renderWardenView();
   }
 
+  // init
   checkExistingSession();
 })();
 </script>
-
 </body>
 </html>

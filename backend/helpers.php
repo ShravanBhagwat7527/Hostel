@@ -87,3 +87,53 @@ function clean_str($val): string
 {
     return trim((string) $val);
 }
+
+// Rate limiting: max 5 complaints per hour per IP
+function check_rate_limit(PDO $pdo, string $ip): void
+{
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM complaints WHERE ip_address = ? AND created_at >= NOW() - INTERVAL 1 HOUR");
+    $stmt->execute([$ip]);
+    $count = (int) $stmt->fetchColumn();
+
+    if ($count >= 5) {
+        json_response(['ok' => false, 'error' => 'Rate limit exceeded. Try again later.'], 429);
+    }
+}
+
+// Handle secure file upload
+function handle_file_upload(array $file): ?string
+{
+    if (!isset($file['error']) || is_array($file['error'])) {
+        return null;
+    }
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        return null;
+    }
+
+    if ($file['size'] > 5242880) { // 5MB limit
+        json_response(['ok' => false, 'error' => 'File size exceeds 5MB limit.'], 422);
+    }
+
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mime = $finfo->file($file['tmp_name']);
+    
+    $allowedMimes = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+    if (!array_key_exists($mime, $allowedMimes)) {
+        json_response(['ok' => false, 'error' => 'Invalid file type. Only JPG, PNG, and WebP are allowed.'], 422);
+    }
+
+    $ext = $allowedMimes[$mime];
+    $filename = bin2hex(random_bytes(16)) . '.' . $ext;
+    
+    // Relative path to save to DB
+    $relPath = 'uploads/' . $filename;
+    
+    // Absolute path on disk
+    $targetPath = __DIR__ . '/uploads/' . $filename;
+    
+    if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+        json_response(['ok' => false, 'error' => 'Failed to save uploaded file.'], 500);
+    }
+
+    return $relPath;
+}
