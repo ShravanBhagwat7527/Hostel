@@ -1,156 +1,172 @@
-<html xmlns:o="urn:schemas-microsoft-com:office:office"
-      xmlns:w="urn:schemas-microsoft-com:office:word"
-      xmlns="http://www.w3.org/TR/REC-html40">
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
 <head>
-<meta charset="utf-8">
-<title>Hostel Portal Documentation</title>
-<!--[if gte mso 9]>
-<xml>
- <w:WordDocument>
-  <w:View>Print</w:View>
-  <w:Zoom>100</w:Zoom>
-  <w:DoNotOptimizeForBrowser/>
- </w:WordDocument>
-</xml>
-<![endif]-->
-<style>
-    body {
-        font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
-        font-size: 11pt;
-        color: #2F2F2F;
-        line-height: 1.6;
-        margin: 1in;
-    }
-    h1 {
-        color: #1F4E79;
-        font-family: 'Segoe UI', Calibri, sans-serif;
-        font-size: 26pt;
-        font-weight: 300;
-        border-bottom: 1px solid #1F4E79;
-        padding-bottom: 6pt;
-        margin-top: 0;
-        margin-bottom: 18pt;
-    }
-    h2 {
-        color: #2E74B5;
-        font-family: 'Segoe UI', Calibri, sans-serif;
-        font-size: 16pt;
-        font-weight: 400;
-        margin-top: 24pt;
-        margin-bottom: 12pt;
-    }
-    h3 {
-        color: #2E74B5;
-        font-size: 13pt;
-        font-weight: bold;
-    }
-    p {
-        margin-bottom: 12pt;
-        text-align: justify;
-    }
-    ul, ol {
-        margin-top: 0;
-        margin-bottom: 12pt;
-        padding-left: 24pt;
-    }
-    li {
-        margin-bottom: 6pt;
-        text-align: justify;
-    }
-    .code-block {
-        background-color: #F8F9FA;
-        border: 1px solid #DEE2E6;
-        padding: 12pt;
-        font-family: 'Consolas', 'Courier New', monospace;
-        font-size: 10pt;
-        color: #212529;
-        white-space: pre-wrap;
-        margin-bottom: 12pt;
-        border-radius: 4px;
-    }
-    .inline-code {
-        font-family: 'Consolas', 'Courier New', monospace;
-        background-color: #F8F9FA;
-        border: 1px solid #DEE2E6;
-        padding: 1pt 3pt;
-        font-size: 10.5pt;
-        color: #D63384;
-    }
-    .footer {
-        margin-top: 40pt;
-        border-top: 1px solid #E0E0E0;
-        padding-top: 10pt;
-        font-size: 9pt;
-        color: #7F7F7F;
-        text-align: center;
-    }
-</style>
+    <meta charset="utf-8">
+    <title>Hostel Desk Portal Documentation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #333333;
+            line-height: 1.6;
+            margin: 40px;
+        }
+        h1 {
+            color: #1e293b;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 10px;
+            font-size: 28px;
+        }
+        h2 {
+            color: #2563eb;
+            margin-top: 30px;
+            font-size: 22px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #334155;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        p {
+            font-size: 11pt;
+            margin-bottom: 15px;
+        }
+        ul {
+            margin-bottom: 15px;
+        }
+        li {
+            font-size: 11pt;
+            margin-bottom: 8px;
+        }
+        .cover-page {
+            text-align: center;
+            margin-top: 100px;
+            margin-bottom: 150px;
+        }
+        .cover-page h1 {
+            border: none;
+            font-size: 42px;
+            color: #0f172a;
+        }
+        .cover-page p {
+            font-size: 18px;
+            color: #64748b;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #cbd5e1;
+            padding: 10px;
+            text-align: left;
+            font-size: 11pt;
+        }
+        th {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            font-weight: bold;
+        }
+        .badge {
+            background-color: #2563eb;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10pt;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
-<h1>Hostel Desk — Technical Setup Guide</h1>
+    <div class="cover-page">
+        <h1>Hostel Desk Management Portal</h1>
+        <p>Comprehensive Technical & Operational Documentation</p>
+        <p><strong>Version:</strong> 2.0 (Updated 2026)</p>
+    </div>
 
-<p>Below is the structure and the technical setup required for the <strong>Hostel Desk &mdash; PHP + MySQL Backend</strong> portal. This document is designed for system administrators and developers to ensure a smooth deployment process.</p>
+    <!-- Page Break -->
+    <br clear="all" style="page-break-before:always" />
 
-<div class="code-block">
-hostel-portal/
-├── database/
-│   └── schema.sql          ← import this first
-├── backend/
-│   ├── config.php          ← DB credentials
-│   ├── db.php               ← PDO connection
-│   ├── helpers.php          ← shared helpers (json, sessions, ticket numbers)
-│   ├── setup_warden.php     ← CLI script to create a warden login
-│   └── api/
-│       ├── submit_complaint.php   POST  — student files a ticket
-│       ├── list_complaints.php    GET   — student lookup / warden dashboard
-│       ├── update_status.php      POST  — warden updates a ticket (auth required)
-│       ├── warden_login.php       POST  — warden signs in
-│       ├── warden_logout.php      POST  — warden signs out
-│       └── session_check.php      GET   — is a warden already logged in?
-└── frontend/
-    └── index.html           ← the portal UI (calls the API above)
-</div>
+    <h2>1. Executive Summary</h2>
+    <p>The <strong>Hostel Desk Management Portal</strong> is a secure, full-stack web application built on PHP and MySQL. It is designed to streamline facility operations and maintenance within university or corporate hostels. The system bridges the communication gap between residents and the operational team, ensuring that all maintenance requests are tracked, categorized, and resolved efficiently with a complete audit trail.</p>
 
-<h2>1. Create the Database</h2>
-<p>Run the following command to import the database schema:</p>
-<div class="code-block">
-mysql -u root -p < database/schema.sql
-</div>
-<p>This creates the <span class="inline-code">hostel_complaint_portal</span> database with three tables: <span class="inline-code">wardens</span>, <span class="inline-code">complaints</span>, and <span class="inline-code">ticket_counters</span>. The counters are used to generate gap-free <span class="inline-code">HC-2026-0001</span> style ticket numbers safely under concurrent submissions.</p>
-<p><em>Note: No warden account is seeded in the SQL file on purpose — passwords should be hashed securely by PHP's <span class="inline-code">password_hash()</span>, rather than being pasted into a <span class="inline-code">.sql</span> file.</em></p>
+    <h2>2. Key Features & Modules</h2>
+    
+    <h3>2.1. Student Portal (Maintenance Requests)</h3>
+    <ul>
+        <li><strong>Ticket Generation:</strong> Students can file detailed maintenance issues categorized by domain (e.g., Plumbing, Electrical, Wi-Fi).</li>
+        <li><strong>Evidence Uploads:</strong> Support for attaching image evidence (JPG, PNG, WebP) with strict 5MB size and MIME type validation.</li>
+        <li><strong>Live Tracking:</strong> Students can securely look up their ticket using a combination of the assigned Ticket ID and Room Number.</li>
+        <li><strong>Ticket Timeline:</strong> View a chronological audit trail showing when a ticket was created and any status updates or comments provided by wardens.</li>
+        <li><strong>1-Click Copy:</strong> Immediate feedback with a direct "Copy Ticket Number" capability post-submission.</li>
+    </ul>
 
-<h2>2. Configure the Database Connection</h2>
-<p>You can edit <span class="inline-code">backend/config.php</span> directly, or set the following environment variables on your server: <span class="inline-code">DB_HOST</span>, <span class="inline-code">DB_PORT</span>, <span class="inline-code">DB_NAME</span>, <span class="inline-code">DB_USER</span>, and <span class="inline-code">DB_PASS</span>.</p>
+    <h3>2.2. Warden Dashboard (Operations Center)</h3>
+    <ul>
+        <li><strong>Analytics Overview:</strong> Real-time key metrics showing Open, In Progress, and Resolved tickets, along with the most common issue category.</li>
+        <li><strong>Actionable Modal Updates:</strong> A dedicated user interface for wardens to update ticket statuses. Every update requires an actionable comment to ensure transparency with the student.</li>
+        <li><strong>Filter & Search:</strong> Powerful table filtering by status, priority, category, or direct search by name/room number.</li>
+    </ul>
 
-<h2>3. Create Your First Warden Login</h2>
-<p>Run the following command in the terminal to set up your first warden:</p>
-<div class="code-block">
-cd backend
-php setup_warden.php warden1 "a-strong-password" "Mr. R. Kulkarni"
-</div>
-<p>Run this script again with the same username any time you want to reset that specific warden's password.</p>
+    <h3>2.3. Platform Announcements (Notice Board)</h3>
+    <ul>
+        <li><strong>Warden Broadcasts:</strong> Wardens can publish hostel-wide notices (e.g., "Water supply disruption") with custom priority tags (Urgent, Maintenance, General).</li>
+        <li><strong>Auto-Expiring Notices:</strong> Wardens define a specific `expires_at` date/time. Once passed, the notice automatically vanishes from the student dashboard.</li>
+        <li><strong>Animated UI Banners:</strong> Active announcements are displayed dynamically on the student homepage featuring an animated megaphone to attract attention.</li>
+    </ul>
 
-<h2>4. Run the Application</h2>
-<p>For local testing with PHP's built-in server, execute the following from the root <span class="inline-code">hostel-portal/</span> folder:</p>
-<div class="code-block">
-php -S localhost:8000
-</div>
-<p>Then navigate your browser to: <strong>http://localhost:8000/frontend/index.html</strong>.</p>
-<p>For a production deployment, upload the entire <span class="inline-code">hostel-portal/</span> folder to any PHP 8+ / MySQL host (e.g., shared hosting, VPS) and point your browser to <span class="inline-code">frontend/index.html</span>. The frontend calls the API using a relative path (<span class="inline-code">../backend/api/...</span>). Keeping the <span class="inline-code">frontend/</span> and <span class="inline-code">backend/</span> folders as siblings is all that is required — no extra configuration needed.</p>
-<p>If you ever deploy the frontend on a <strong>different domain</strong> than the backend, you will need to add CORS headers to each <span class="inline-code">api/*.php</span> file and update the cookie <span class="inline-code">samesite</span> handling in <span class="inline-code">helpers.php</span>. The default same-origin setup does not require these modifications.</p>
+    <h2>3. Security Architecture</h2>
+    <p>Adhering to strict corporate security standards, the system employs multiple layers of defense:</p>
+    <ul>
+        <li><strong>Atomic Ticket Generation:</strong> Uses MySQL <code>SELECT ... FOR UPDATE</code> locks to guarantee gap-free ticket IDs (e.g., HC-2026-0001) even under heavy concurrent traffic.</li>
+        <li><strong>Authentication:</strong> Staff accounts utilize PHP's robust <code>password_hash()</code> (Bcrypt) and secure HttpOnly session cookies.</li>
+        <li><strong>Rate Limiting:</strong> Enforces an IP-based throttle limit (max 5 requests per hour) to prevent spamming the ticket submission endpoint.</li>
+        <li><strong>Input Sanitization:</strong> Employs PDO Prepared Statements exclusively across all database interactions to nullify SQL Injection vulnerabilities.</li>
+        <li><strong>Honeypot Anti-Bot:</strong> Implements a hidden honeypot field in the ticket submission form to trap automated bots.</li>
+    </ul>
 
-<h2>5. How Login and Security Works</h2>
-<ul>
-    <li><strong>Students:</strong> Do not have accounts. They identify a ticket by name + room number. <span class="inline-code">list_complaints.php?mode=student&amp;lookup=...</span> only ever returns tickets matching that specific search query.</li>
-    <li><strong>Wardens:</strong> Log in with a username/password (<span class="inline-code">warden_login.php</span>), which establishes a PHP session (via an <span class="inline-code">httponly</span> cookie). Both <span class="inline-code">update_status.php</span> and the warden dashboard reject requests with a <span class="inline-code">401 Unauthorized</span> error if no warden is logged in.</li>
-    <li><strong>Password Security:</strong> Passwords are hashed with bcrypt via <span class="inline-code">password_hash()</span> and verified using <span class="inline-code">password_verify()</span>. They are never stored or compared in plain text.</li>
-    <li><strong>Database Security:</strong> All queries use PDO prepared statements to ensure user input is safely handled and never concatenated into SQL strings.</li>
-</ul>
+    <h2>4. Database Schema Overview</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Table Name</th>
+                <th>Purpose</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>wardens</strong></td>
+                <td>Stores staff login credentials, Bcrypt password hashes, and active status.</td>
+            </tr>
+            <tr>
+                <td><strong>complaints</strong></td>
+                <td>Core table tracking ticket details, priority, student info, room, and status.</td>
+            </tr>
+            <tr>
+                <td><strong>complaint_logs</strong></td>
+                <td>Relational table capturing the audit trail of status changes and warden comments.</td>
+            </tr>
+            <tr>
+                <td><strong>announcements</strong></td>
+                <td>Stores hostel-wide broadcasts, priority tags, and automated expiration timestamps.</td>
+            </tr>
+            <tr>
+                <td><strong>ticket_counters</strong></td>
+                <td>High-performance locking table utilized to generate atomic, sequential ticket numbers.</td>
+            </tr>
+        </tbody>
+    </table>
 
-<div class="footer">
-    Hostel Desk Documentation &bull; Generated Automatically
-</div>
-
+    <h2>5. Deployment & Setup</h2>
+    <p>To deploy the system on a new environment (XAMPP, LAMP, or production server), follow these steps:</p>
+    <ol>
+        <li>Import the core <code>database/schema.sql</code> file into the MySQL database to provision all required tables.</li>
+        <li>Update <code>backend/db.php</code> with the target environment's database credentials.</li>
+        <li>Ensure the <code>backend/uploads</code> directory has standard read/write permissions for the web server to process media uploads.</li>
+        <li>Execute a script to generate the first administrative Warden account, as the system does not seed default weak passwords.</li>
+    </ol>
+    <p><strong>End of Document.</strong></p>
 </body>
 </html>
